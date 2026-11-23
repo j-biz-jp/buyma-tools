@@ -154,7 +154,7 @@ body:not(.locked) #gate{display:none}
 
   <div class="tabs" id="tabs">
     <button class="tab on" data-t="m1" type="button">ステップ1<span class="d">しくみ</span></button>
-    <button class="tab" data-t="m2" type="button">ステップ2<span class="d">利益のしくみ</span></button>
+    <button class="tab" data-t="m2" type="button">ステップ2<span class="d">売上の内訳</span></button>
     <button class="tab" data-t="m3" type="button">ステップ3<span class="d">出品入力</span></button>
     <button class="tab" data-t="mi" type="button">ステップ4<span class="d">画像づくり</span></button>
     <button class="tab" data-t="m4" type="button">ステップ5<span class="d">ショップ準備</span></button>
@@ -163,31 +163,31 @@ body:not(.locked) #gate{display:none}
   <!-- M1 -->
   <section class="card" id="m1">
     <h2>ステップ1:BUYMAのしくみを知る</h2>
-    <p class="why">まずは「どうやってお金になるのか」をざっくりつかみましょう。難しい言葉は出てきません。</p>
+    <p class="why">まずはBUYMAで商品を販売する流れを、ざっくりつかみましょう。難しい言葉は出てきません。</p>
     <svg class="fig fig-sm" viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BUYMAで売れるまでの流れ" font-family="Noto Sans JP, sans-serif">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f5f5b"/></marker></defs>
 <g>
 <rect x="8" y="6" width="304" height="68" rx="14" fill="#e3efed"/>
 <circle cx="46" cy="40" r="24" fill="#1f5f5b"/><path d="M34 34 h24 l-3 -8 h-18 z M35 34 v14 h22 v-14" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
-<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">① あなたが出品する</text><text x="82" y="56" font-size="12" fill="#6b665e">BUYMAの自分のお店に商品を並べる</text>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">① あなたが出品する</text><text x="82" y="56" font-size="12" fill="#6b665e">商品を選び、情報と画像を準備して出品</text>
 </g>
 <line x1="160" y1="78" x2="160" y2="96" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
 <g transform="translate(0,96)">
 <rect x="8" y="6" width="304" height="68" rx="14" fill="#faf8f4" stroke="#e6e1d8"/>
 <circle cx="46" cy="40" r="24" fill="#c98a3a"/><path d="M33 31 h4 l4 14 h14 l3 -10 h-19" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="43" cy="50" r="2.4" fill="#fff"/><circle cx="54" cy="50" r="2.4" fill="#fff"/>
-<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">② お客様が注文する</text><text x="82" y="56" font-size="12" fill="#6b665e">1,200万人の会員の中から</text>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">② お客様が注文する</text><text x="82" y="56" font-size="12" fill="#6b665e">注文内容を確認する</text>
 </g>
 <line x1="160" y1="174" x2="160" y2="192" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
 <g transform="translate(0,192)">
 <rect x="8" y="6" width="304" height="68" rx="14" fill="#faf8f4" stroke="#e6e1d8"/>
 <circle cx="46" cy="40" r="24" fill="#6b665e"/><path d="M34 34 l12 -6 l12 6 v14 l-12 6 l-12 -6 z M34 34 l12 6 l12 -6 M46 40 v14" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
-<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">③ 事務局が買い付け・発送</text><text x="82" y="56" font-size="12" fill="#6b665e">あなたは連絡するだけ</text>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">③ 商品を手配して発送</text><text x="82" y="56" font-size="12" fill="#6b665e">注文が入ってから仕入れる</text>
 </g>
 <line x1="160" y1="270" x2="160" y2="288" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
 <g transform="translate(0,288)">
 <rect x="8" y="6" width="304" height="68" rx="14" fill="#e6f2e7"/>
 <circle cx="46" cy="40" r="24" fill="#2f7a3c"/><text x="46" y="48" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">¥</text>
-<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">④ 利益があなたに</text><text x="82" y="56" font-size="12" fill="#6b665e">お客様に届いたら売上が入る</text>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">④ 売上を受け取る</text><text x="82" y="56" font-size="12" fill="#6b665e">お客様の受け取り後に入金</text>
 </g>
 </svg>
     <div id="quiz"></div>
@@ -204,25 +204,25 @@ body:not(.locked) #gate{display:none}
 
   <!-- M2 -->
   <section class="card" id="m2" hidden>
-    <h2>ステップ2:1つ売れたら、いくら残る？</h2>
-    <p class="why">計算はしなくて大丈夫です。「お客様が払う代金の中から何が支払われて、いくら残るのか」の見方だけ知っておきましょう。</p>
+    <h2>ステップ2:売上の内訳を知る</h2>
+    <p class="why">計算はしなくて大丈夫です。お客様が払う代金の中から、どんな費用が支払われるのか、内訳の見方を知っておきましょう。</p>
     <div class="item">
-      <div class="src">例:BUYMAでバッグが1つ売れたとき(わかりやすい数字にしています)</div>
+      <div class="src">例:販売価格100,000円のバッグの場合(説明用の数字です。実際の金額は商品や仕入れ先によって変わります)</div>
       <dl style="margin-top:8px">
         <dt>お客様が払う代金</dt><dd>100,000円</dd>
         <dt>仕入れ値</dt><dd>−75,000円</dd>
-        <dt>送料など</dt><dd>−5,000円</dd>
+        <dt>送料・関税など</dt><dd>−5,000円</dd>
         <dt>BUYMAの手数料</dt><dd>−7,700円</dd>
       </dl>
-      <div class="profit"><span>あなたの利益</span><b>12,300円</b></div>
+      <div class="profit"><span>手元に残る金額</span><b>12,300円</b></div>
     </div>
     <div class="point">
-      <b>送料や手数料は、あなたが別に負担するお金ではありません</b>
-      出品するときに、仕入れ値・送料・手数料をあらかじめ売る値段に含めて決めます。だから、これらはすべてお客様が払う代金の中からまかなわれ、残ったお金があなたの利益になります。「売れたのに手数料で損をした」ということが起きないよう、出品前に金額を決めておくのがポイントです。
+      <b>送料・関税・手数料は、販売価格に含めて考えます</b>
+      出品するときに、仕入れ値・送料・関税・手数料をあらかじめ販売価格に含めて決めます。そのため、これらの費用は販売価格の中から支払われ、差し引いた残りが手元に残る金額になります。「売れたのに手数料で損をした」ということが起きないよう、出品前に金額を決めておくのがポイントです。
     </div>
     <div id="calc"></div>
     <div class="done" id="m2done">ステップ2 クリア!</div>
-    <div class="next" id="m2next">お金の流れがつかめたら、もう半分まで来ています。今日はここまででOKです。<button class="btn sub" type="button" data-go="m3">ステップ3を開く</button></div>
+    <div class="next" id="m2next">売上の内訳がつかめました。今日はここまででOKです。<button class="btn sub" type="button" data-go="m3">ステップ3を開く</button></div>
   </section>
 
   <!-- M3 -->
@@ -285,15 +285,15 @@ body:not(.locked) #gate{display:none}
     <button class="btn" id="m3check" type="button">答え合わせする</button>
     <div id="m3fb"></div>
     <div class="done" id="m3done">ステップ3 クリア!</div>
-    <div class="next" id="m3next">出品フォームまで体験できました。次はお待ちかねの画像づくりです。<button class="btn sub" type="button" data-go="mi">ステップ4を開く</button></div>
+    <div class="next" id="m3next">出品フォームまで体験できました。次は画像づくりです。<button class="btn sub" type="button" data-go="mi">ステップ4を開く</button></div>
   </section>
 
   <!-- MI -->
   <section class="card" id="mi" hidden>
     <h2>ステップ4:出品用の商品画像を作ってみる</h2>
-    <p class="why">BUYMAでは、1枚目の画像でクリックされるかがほぼ決まります。お手持ちのバッグや財布、小物をスマホで撮って、出品用の画像に仕上げてみましょう。</p>
+    <p class="why">BUYMAでは、1枚目の画像がクリックされるかどうかを大きく左右します。お手持ちのバッグや財布、小物をスマホで撮って、出品用の画像に仕上げてみましょう。</p>
     <div class="point" style="margin-top:0">
-      <b>売れる1枚目の3つのコツ</b>
+      <b>見てもらいやすい1枚目の3つのコツ</b>
       ① 正方形で、商品が真ん中に大きく<br>② 背景はすっきり、明るく<br>③ 商品のよさ(色・形)がひと目で分かる
     </div>
     <div class="links">
@@ -381,12 +381,12 @@ body:not(.locked) #gate{display:none}
       <div class="small" style="margin:6px 0 8px">まずは流れを知っておくだけで大丈夫です。</div>
       <ol class="clist">
         <li>BUYMAのトップページ右上の「会員登録」を押す</li>
-        <li>メールアドレス、パスワード、ニックネームを入れる。<b>ニックネームがそのままショッパー名になり、後から変更できません</b></li>
+        <li>メールアドレス、パスワード、ニックネームを入れる。<b>ニックネームはショップの名前として表示されます。後から変えにくいので、よく考えて決めましょう</b></li>
         <li>届いたメールから登録を完了する</li>
         <li>「基本情報設定」を順番に入れる(自己紹介文は後からでOK)</li>
         <li>パーソナルショッパーのプロフィールを整える。完璧でなくて大丈夫。6割くらいの完成度で進めましょう</li>
-        <li>売上を受け取る口座を登録する(楽天銀行だと振込手数料が安く済みます)</li>
-        <li>利用規約を読む。特に第8条・第11条・第13条は必ず目を通しておきましょう</li>
+        <li>売上を受け取る口座を登録する</li>
+        <li>利用規約を一度読んでおく(特に「禁止行為」の項目)</li>
       </ol>
     </details>
 
@@ -422,7 +422,7 @@ body:not(.locked) #gate{display:none}
         <div class="small" style="margin-bottom:6px">実際の人気ショップを見てみましょう(BUYMAが開きます)</div>
         <a class="lk" href="https://www.buyma.com/rank/buyer/fashion.html" target="_blank" rel="noopener"><b>パーソナルショッパーランキング</b><span>上位ショップの名前・アイコン・自己紹介文を参考に</span></a>
         <a class="lk" href="https://www.buyma.com/buyer/premium/" target="_blank" rel="noopener"><b>プレミアムパーソナルショッパー</b><span>BUYMAが認めた実績のあるショップの一覧</span></a>
-        <a class="lk" href="https://www.buyma.com/buyer/" target="_blank" rel="noopener"><b>BUYMA公式:出品者になって売るには</b><span>出品者の体験談や、BUYMA事務局のサポート内容</span></a>
+        <a class="lk" href="https://www.buyma.com/buyer/" target="_blank" rel="noopener"><b>BUYMA公式:出品者になって売るには</b><span>出品者の体験談や、BUYMA公式のサポート内容</span></a>
       </div>
       <div class="item" style="margin-top:8px">
         <div class="src">自己紹介文の例</div>
@@ -430,7 +430,7 @@ body:not(.locked) #gate{display:none}
       </div>
     </details>
 
-    <label for="s_name">ショッパー名の候補(後から変更できないので、いくつか考えて一番いいものを入れてみましょう)</label>
+    <label for="s_name">ショッパー名の候補(後から変えにくいので、いくつか考えて一番いいものを入れてみましょう)</label>
     <input id="s_name" placeholder="例:Milano Select / Luce Boutique">
 
     <label for="s_intro">自己紹介文の下書き</label>
@@ -504,7 +504,7 @@ body:not(.locked) #gate{display:none}
       var prev = ORDER[ORDER.indexOf(m) - 1];
       var locked = prev && !state[prev];
       t.classList.toggle("lock", !!locked);
-      t.querySelector(".d").textContent = state[m] ? "クリア" : locked ? "未開放" : ({m1:"しくみ",m2:"利益のしくみ",m3:"出品入力",mi:"画像づくり",m4:"ショップ準備"})[m];
+      t.querySelector(".d").textContent = state[m] ? "クリア" : locked ? "未開放" : ({m1:"しくみ",m2:"売上の内訳",m3:"出品入力",mi:"画像づくり",m4:"ショップ準備"})[m];
       var nx = $(m + "next"); if (nx) nx.style.display = state[m] ? "block" : "none";
     });
     $("badge").style.display = n === ORDER.length ? "block" : "none";
@@ -514,9 +514,9 @@ body:not(.locked) #gate{display:none}
   // ---------- M1 quiz ----------
   var quiz = [
     { q:"BUYMAはどんなサイト？", o:["中古品を売り買いするフリマアプリ","世界中の出品者から海外ブランド品を買える通販サイト","日本のお店だけが出店する通販サイト"], a:1, e:"BUYMAは、世界中の出品者から海外ブランド品を買える通販サイトです。あなたはここで商品を紹介する側になります。" },
-    { q:"あなたがBUYMAでやることは？", o:["商品を選んで出品すること","海外のお店に行って買い付けること","商品を梱包して発送すること"], a:0, e:"あなたがやるのは、商品を選んで出品することです。買い付けや発送はあなたの仕事ではありません。" },
-    { q:"出品する前に、商品を先に買っておく必要はある？", o:["ある。在庫を用意してから出品する","ない。注文が入ってから仕入れる"], a:1, e:"注文が入ってから仕入れるので、先に商品を買う必要はありません。売れ残りの心配もありません。" },
-    { q:"商品が売れたら、どうすればいい？", o:["自分で海外のお店に注文する","事務局に連絡する","何もしなくていい"], a:1, e:"事務局に連絡すれば、買い付けから検品・発送まで対応してもらえます。" },
+    { q:"BUYMAで最初にやることは？", o:["売れそうな商品を選んで出品する","海外へ仕入れに行く","在庫をまとめて買っておく"], a:0, e:"まずは売れそうな商品を選んで、出品するところから始まります。" },
+    { q:"出品する前に、商品を先に買っておく必要はある？", o:["ある。在庫を用意してから出品する","ない。注文が入ってから仕入れる"], a:1, e:"注文が入ってから仕入れるので、先に商品を買う必要はありません。在庫を抱える心配がありません。" },
+    { q:"商品が売れたら、次にやることは？", o:["注文内容を確認して、商品を手配する","何もしなくていい","お客様と直接やりとりして、BUYMAの外で取引する"], a:0, e:"注文が入ったら、内容を確認して商品を手配し、お客様に届けます。BUYMAの外での取引は禁止されているので注意しましょう。" },
     { q:"出品したあと、大事なことは？", o:["出品したらあとは待つだけ","価格や写真を見直して、見てもらえる工夫を続ける"], a:1, e:"出品してからがスタートです。見直しを続けるほど、お客様の目に留まりやすくなります。" }
   ];
   var qbox = $("quiz");
@@ -552,9 +552,9 @@ body:not(.locked) #gate{display:none}
 
   // ---------- M2 profit ----------
   var calc = [
-    { q:"このバッグが1つ売れたとき、あなたに残るお金(利益)はいくら？", o:["100,000円","75,000円","12,300円"], a:2, e:"お客様が払う代金から、仕入れ値・送料・手数料が支払われ、残った 12,300円 があなたの利益です。" },
-    { q:"では、同じバッグが2つ売れたら？", o:["12,300円","24,600円","200,000円"], a:1, e:"1つ12,300円なので、2つで24,600円。出品を増やして売れる数が増えるほど、残るお金も積み上がります。" },
-    { q:"BUYMAにお店を持っているだけで、毎月かかる費用は？", o:["月に数万円かかる","0円(費用がかかるのは売れたときだけ)"], a:1, e:"BUYMAはお店の維持費が0円です。売れなければ費用はかからないので、安心してお店を続けられます。" }
+    { q:"この例で、手元に残る金額はいくら？", o:["100,000円","75,000円","12,300円"], a:2, e:"販売価格から、仕入れ値・送料・関税・手数料を差し引いた 12,300円 が手元に残る金額です。" },
+    { q:"送料や関税は、どう考える？", o:["売れたあとに自分で別に払う","出品するときに販売価格に含めて考える"], a:1, e:"出品するときに、仕入れ値・送料・関税・手数料を含めて販売価格を決めておくのが基本です。" },
+    { q:"BUYMAの手数料がかかるのはいつ？", o:["毎月決まった額がかかる","商品が売れたとき"], a:1, e:"BUYMAは出店料や月額費用がなく、手数料は商品が売れたときにかかります。" }
   ];
   var cbox = $("calc");
   calc.forEach(function(item, i){
