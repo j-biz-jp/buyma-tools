@@ -198,6 +198,11 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .mrowx div{border:1px solid var(--up);border-radius:8px;padding:8px;text-align:center}
 .mrowx span{display:block;font-size:11px;color:var(--sub)}
 .mrowx b{font-size:16px;font-weight:900;color:var(--up)}
+.fv{display:inline-block;margin-left:8px;font-size:11px;font-weight:500;color:var(--sub)}
+.kpis.two{grid-template-columns:1fr 1fr;margin-top:0;border-top:none}
+.kpis.two b{font-size:22px}
+.kpis em{font-style:normal;font-weight:700;color:var(--sub);margin-left:4px}
+.kpis em.up{color:var(--up)}
 /* brand momentum */
 .bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
@@ -320,11 +325,11 @@ body:not(.locked) #gate{display:none}
     <div class="strip" id="top10" aria-label="人気TOP10"></div>
     <div class="notes" id="notes"></div>
     <section class="pcin">
-      <h2>利益が狙える人気商品</h2>
-      <p class="lead">BUYMAで今売れている3万円以上の商品です。1個売れたときの利益と、海外でいくら以下で仕入れればいいかを、送料・関税の目安まで含めて計算しています。</p>
+      <h2>人気商品の仕入れ目安</h2>
+      <p class="lead">BUYMAで人気の3万円以上の商品について、利益率10%を確保できる仕入れ値の上限を、送料・関税の目安を含めて計算しています。</p>
       <div class="mvtabs" id="pcband"><button class="chip on" type="button" data-b="0">3〜10万円</button><button class="chip" type="button" data-b="1">10万円以上</button></div>
       <div class="strip" id="pcpick"></div>
-      <ol class="pcflow"><li><b>商品を選ぶ</b>仕入れ値の上限が自動で出ます</li><li><b>海外で探す</b>セール・アウトレットも1タップ</li><li><b>価格を入れる</b>利益が出るかすぐ判定</li></ol>
+      <ol class="pcflow"><li><b>商品を選ぶ</b>仕入れ値の上限が出ます</li><li><b>海外で探す</b>国ごとに検索できます</li><li><b>価格を入れる</b>利益を計算します</li></ol>
     </section>
     <section>
       <h2>今朝の動き</h2>
@@ -451,6 +456,12 @@ body:not(.locked) #gate{display:none}
     });
     var byId = {}; items.forEach(function(i){ byId[i.id] = i; });
     var prevRank = {}; if (prev) prev.items.forEach(function(a){ prevRank[String(a[1])] = a[0]; });
+    var PL = D.pulse || [], plNow = PL.length ? PL[PL.length - 1].s : {}, plPrev = PL.length > 1 ? PL[PL.length - 2].s : null, plPrevDate = PL.length > 1 ? PL[PL.length - 2].date : "";
+    function pulseOf(id){
+      var n = plNow[id]; if (!n) return null;
+      var p = plPrev && plPrev[id];
+      return {acc:n[0], fav:n[1], dAcc:p && n[0] != null && p[0] != null ? n[0] - p[0] : null, dFav:p && n[1] != null && p[1] != null ? n[1] - p[1] : null};
+    }
     var md = function(d){ return (+d.slice(5, 7)) + "/" + (+d.slice(8)); };
     var streak = {};
     items.forEach(function(it){
@@ -478,7 +489,7 @@ body:not(.locked) #gate{display:none}
       var url = 'https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/';
       return '<div class="row' + (it.rank <= 3 ? ' top' : '') + '"><div class="rk"><div class="num">' + (o.rankText || it.rank) + '</div>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
         '<a href="' + url + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' + pic(it.img, 210, "") + '</a>' +
-        '<a href="' + url + '" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div><div class="pr">' + yen(it.price) + pfBadge(it.id) + '</div><span class="calc" data-pc="' + esc(it.id) + '">利益を計算</span></a>' +
+        '<a href="' + url + '" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div><div class="pr">' + yen(it.price) + pfBadge(it.id) + (pulseOf(it.id) && pulseOf(it.id).fav != null ? '<span class="fv">♡' + pulseOf(it.id).fav.toLocaleString("ja-JP") + '</span>' : '') + '</div><span class="calc" data-pc="' + esc(it.id) + '">利益を計算</span></a>' +
         '<button class="heart' + (on ? ' on' : '') + '" type="button" data-id="' + esc(it.id) + '" aria-pressed="' + on + '" aria-label="気になるリストに入れる">' + HEART + '</button></div>';
     }
     function wire(el){
@@ -515,7 +526,7 @@ body:not(.locked) #gate{display:none}
       riseList.sort(function(a,b){ return b.gain - a.gain || a.it.rank - b.it.rank; });
       riseList = riseList.slice(0, 8);
       $("riselead").textContent = md(prev.date) + "のランキングと比べて、順位を大きく上げた商品と、新しく上位100件に入った商品です。";
-      $("mvt").innerHTML = '<button class="chip on" type="button" data-m="0">急上昇<small>' + riseList.length + '</small></button><button class="chip" type="button" data-m="1">初登場<small>' + newList.length + '</small></button>';
+      $("mvt").innerHTML = '<button class="chip on" type="button" data-m="0">急上昇<small>' + riseList.length + '</small></button><button class="chip" type="button" data-m="1">初登場<small>' + newList.length + '</small></button><button class="chip" type="button" data-m="2">お気に入りの伸び</button>';
       $("mvt").addEventListener("click", function(e){
         var b = e.target.closest(".chip"); if (!b) return;
         mvMode = +b.dataset.m;
@@ -541,7 +552,7 @@ body:not(.locked) #gate{display:none}
       var picks = items.filter(function(it){ return it.price >= lo && it.price < hi && it.img; }).slice(0, 12);
       $("pcpick").innerHTML = picks.map(function(it){
         return '<a class="card wide" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" data-pc="' + esc(it.id) + '" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="rk' + (it.rank <= 3 ? ' w' : '') + '">' + it.rank + '</span><div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div>' +
-          '<div class="gain1" data-gainid="' + esc(it.id) + '"></div><span class="cap" data-capid="' + esc(it.id) + '"></span><span class="go">利益を計算</span></a>';
+          '<span class="cap" data-capid="' + esc(it.id) + '"></span><span class="go">詳しく計算する</span></a>';
       }).join("") || '<div class="empty">今日はこの価格帯の商品がランキングにありません。</div>';
       if (typeof feeRate === "number") fillCaps();
     }
@@ -617,6 +628,12 @@ body:not(.locked) #gate{display:none}
         html = riseList.map(function(x){
           return mrow(x.it, '<div><div class="big">+' + x.gain + '</div><span class="unit">位アップ</span></div>', x.from + '位 → <b>' + x.it.rank + '位</b>　' + yen(x.it.price));
         }).join("") || '<div class="empty">今日は大きく順位を上げた商品はありませんでした。</div>';
+      } else if (mvMode === 2) {
+        var fl = items.map(function(it){ var q = pulseOf(it.id); return q && q.dFav != null ? {it:it, q:q} : null; }).filter(Boolean)
+          .sort(function(a,b){ return b.q.dFav - a.q.dFav; }).slice(0, 8);
+        html = fl.length ? '<p class="lead" style="margin:10px 0 0">' + md(plPrevDate) + 'からお気に入り登録が増えた人数です(人気上位' + Object.keys(plNow).length + '商品が対象)。</p>' + fl.map(function(x){
+          return mrow(x.it, '<div><div class="big" style="color:var(--wine)">+' + x.q.dFav.toLocaleString("ja-JP") + '</div><span class="unit">人</span></div>', 'お気に入り ' + x.q.fav.toLocaleString("ja-JP") + '人　' + yen(x.it.price));
+        }).join("") : '<div class="empty"><b>明日から表示されます</b>人気上位の商品のお気に入り登録数を毎日記録して、増え方の大きい商品を出します。</div>';
       } else {
         html = newList.slice(0, 10).map(function(it){
           return mrow(it, '<div><div class="big nw">NEW</div><span class="unit">初登場</span></div>', '<b>' + it.rank + '位</b>で初登場　' + yen(it.price));
@@ -656,7 +673,6 @@ body:not(.locked) #gate{display:none}
     }
     function fillCaps(){
       Array.prototype.forEach.call(document.querySelectorAll("[data-capid]"), function(el){ var it = byId[el.dataset.capid]; el.textContent = it ? capLine(it) : ""; });
-      Array.prototype.forEach.call(document.querySelectorAll("[data-gainid]"), function(el){ var it = byId[el.dataset.gainid]; el.innerHTML = it ? '1個売れたら<b>利益 約¥' + Math.round(it.price * target).toLocaleString("ja-JP") + '</b>' : ""; });
     }
     function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); drawProfit(); if (typeof feeRate === "number") fillCaps(); }
     drawAll();
@@ -836,7 +852,7 @@ body:not(.locked) #gate{display:none}
       return lo;
     }
     function fmtCur(v, c){ if (c[1] === "KRW") v = Math.floor(v / 1000) * 1000; else v = Math.floor(v); return c[2] + v.toLocaleString("en-US"); }
-    function capLine(it){ var sh = SHIP[it.g || genre(it.name)] || 3000; var j = capJpy(it.price, feeRate, target, sh, "auto", it); return j > 0 && FX.USD ? fmtCur(j / FX.USD, CAPS[0]) + "以下で仕入れればOK" : "セール品を狙う商品"; }
+    function capLine(it){ var sh = SHIP[it.g || genre(it.name)] || 3000; var j = capJpy(it.price, feeRate, target, sh, "auto", it); return j > 0 && FX.USD ? "仕入れ目安 " + fmtCur(j / FX.USD, CAPS[0]) + "以下" : "セール価格での仕入れ向き"; }
     function gurl(c, words, sale){ return "https://www.google.com/search?tbm=shop&gl=" + c[0] + "&hl=" + c[1] + "&q=" + encodeURIComponent(words + (sale ? " sale outlet" : "")); }
     function checkerHtml(it){
       var p = PROF[it.id] || {};
@@ -844,9 +860,9 @@ body:not(.locked) #gate{display:none}
       var fxd = D.fx && D.fx.date ? md(D.fx.date) : "";
       var regs = REGIONS.map(function(rg){ return [rg[1], rg[2], rg[0], rg[3]]; });
       return '<div class="pc"><h4>利益チェッカー</h4>' +
-        '<p class="sub">この価格以下で仕入れられれば、目標の利益が出ます。</p>' +
+        '<p class="sub">目標の利益率を確保するための、仕入れ値の上限です。</p>' +
         '<div class="tg" id="pc_tg">' + [0.10, 0.15, 0.20].map(function(t){ return '<button type="button" data-t="' + t + '" class="' + (Math.abs(t - target) < 1e-9 ? 'on' : '') + '">利益率 ' + Math.round(t * 100) + '%</button>'; }).join("") + '</div>' +
-        '<div class="caps" id="pc_caps"></div><div class="msim" id="pc_m"></div><details class="more2"><summary>ほかの通貨で見る</summary><div class="caps" id="pc_caps2"></div></details>' +
+        '<div class="caps" id="pc_caps"></div><details class="more2"><summary>ほかの通貨で見る</summary><div class="caps" id="pc_caps2"></div></details>' +
         '<details class="more2"><summary>送料・関税・手数料を変える</summary>' +
         '<div class="opt"><div><label for="pc_s">送料(円)</label><input id="pc_s" type="number" inputmode="numeric" min="0" value="' + (p.ship != null ? p.ship : (SHIP[it.g || genre(it.name)] || 3000)) + '"></div>' +
         '<div><label for="pc_dm">関税・輸入消費税</label><select id="pc_dm"><option value="auto"' + ((p.dm || "auto") === "auto" ? " selected" : "") + '>自動で見積もる</option><option value="buyer"' + (p.dm === "buyer" ? " selected" : "") + '>購入者が払う(0円)</option><option value="manual"' + (p.dm === "manual" ? " selected" : "") + '>金額を入れる</option></select></div></div>' +
@@ -854,7 +870,7 @@ body:not(.locked) #gate{display:none}
         '<div class="opt" style="grid-template-columns:1fr"><div><label for="pc_f">BUYMAの手数料</label><select id="pc_f"><option value="0.077"' + (feeRate !== 0.055 ? " selected" : "") + '>7.7%(一般)</option><option value="0.055"' + (feeRate === 0.055 ? " selected" : "") + '>5.5%(プレミアムパーソナルショッパー)</option></select></div></div></details>' +
         '<div class="stp"><span>1</span>海外のお店で探す</div><div class="regions">' +
         regs.map(function(rg){ return '<a href="' + gurl(rg, words) + '" target="_blank" rel="noopener" data-cur="' + rg[3] + '">' + rg[2] + '</a>'; }).join("") + '</div>' +
-        '<div class="stp2">セール・アウトレットで探す(安く見つかりやすい)</div><div class="regions sale">' +
+        '<div class="stp2">セール・アウトレットで探す</div><div class="regions sale">' +
         regs.map(function(rg){ return '<a href="' + gurl(rg, words, true) + '" target="_blank" rel="noopener" data-cur="' + rg[3] + '">' + rg[2] + '</a>'; }).join("") + '</div>' +
         '<div class="q">検索する言葉:' + esc(words) + '</div>' +
         '<div class="stp"><span>2</span>見つけた価格を入れる</div>' +
@@ -874,11 +890,10 @@ body:not(.locked) #gate{display:none}
         var tAtCap = dm === "auto" ? taxEst(it, cj, ship) : null;
         var cell = function(c){ return '<div><span>' + c[0] + '</span><b>' + fmtCur(cj / FX[c[1]], c) + '</b><small>以下</small></div>'; };
         $("pc_caps").innerHTML = cj > 0 ? CAPS.map(cell).join("") +
-          '<p>円にすると <b>' + y(cj) + '</b> 以下 ・ 利益 ' + y(it.price * target) + '(' + Math.round(target * 100) + '%)<br>送料 ' + y(ship) + (dm === "auto" ? '・関税と輸入消費税 約' + y(tAtCap.total) + (tAtCap.exempt ? '(少額のため免税の見込み)' : '') : dm === "buyer" ? '・関税は購入者負担' : '・関税など ' + y(dutyArg)) + ' を引いて計算しています。</p>'
-          : '<p class="ng">定価での仕入れだと利益を取りにくい価格帯です。セール・アウトレットで安く見つけたときに狙う商品です。</p>';
+          '<p>円にすると <b>' + y(cj) + '</b> 以下<br>送料 ' + y(ship) + (dm === "auto" ? '・関税と輸入消費税 約' + y(tAtCap.total) + (tAtCap.exempt ? '(少額のため免税の見込み)' : '') : dm === "buyer" ? '・関税は購入者負担' : '・関税など ' + y(dutyArg)) + ' を引いて計算しています。</p>'
+          : '<p class="ng">定価での仕入れでは利益を確保しにくい価格帯です。セール・アウトレット価格での仕入れが前提になります。</p>';
         $("pc_caps2").innerHTML = cj > 0 ? CAPS2.map(cell).join("") : "";
-        var per = it.price * target;
-        $("pc_m").innerHTML = cj > 0 ? '<div class="mh">この商品が売れたら(利益率' + Math.round(target * 100) + '%)</div><div class="mrowx">' + [1, 3, 5].map(function(n){ return '<div><span>月' + n + '個</span><b>' + y(per * n) + '</b></div>'; }).join("") + '</div>' : '';
+
         var rec = PROF[it.id] || {};
         rec.ship = ship; rec.dm = dm; rec.duty = +$("pc_d").value || 0; rec.name = it.name; rec.brand = it.brand; rec.price = it.price; rec.img = it.img || "";
         if (!(price > 0) || !FX[cur]) {
@@ -889,9 +904,9 @@ body:not(.locked) #gate{display:none}
           var tx = dm === "auto" ? taxEst(it, cost, ship) : null, duty = dm === "auto" ? tx.total : dutyArg;
           var profit = it.price - fee - cost - ship - duty, rate = profit / it.price * 100;
           var diff = cj - cost;
-          var judge = profit <= 0 ? '<div class="jd ng">この価格だと赤字です。あと約 ' + y(cost - (it.price - fee - ship - duty)) + ' 安く見つかれば利益が出ます。</div>'
-            : diff >= 0 ? '<div class="jd ok">目標の利益率をクリアしています。</div>'
-            : '<div class="jd mid">利益は出ますが、目標の利益率まではあと約 ' + y(-diff) + ' 安く仕入れたいところです。</div>';
+          var judge = profit <= 0 ? '<div class="jd ng">この仕入れ値では赤字になります。利益を出すには、あと約 ' + y(cost - (it.price - fee - ship - duty)) + ' 安い仕入れ値が必要です。</div>'
+            : diff >= 0 ? '<div class="jd ok">目標の利益率を確保できる価格です。</div>'
+            : '<div class="jd mid">目標の利益率までは、あと約 ' + y(-diff) + ' 安い仕入れ値が必要です。</div>';
           $("pc_r").innerHTML = '<div class="big"><span>利益の目安</span><b class="' + (profit < 0 ? 'neg' : '') + '">' + (profit >= 0 ? '+' : '') + y(profit) + '</b></div>' +
             '<div class="rate">利益率 ' + rate.toFixed(1) + '%</div>' + judge +
             '<dl><dt>BUYMAでの価格</dt><dd>' + y(it.price) + '</dd>' +
@@ -962,6 +977,9 @@ body:not(.locked) #gate{display:none}
         '<div class="sh-in"><div class="br">' + esc(it.brand) + '</div><h3 id="sh_name">' + esc(it.name) + '</h3><div class="pr">' + yen(it.price) + '</div>';
       if (ins.length) {
         html += '<div class="kpis"><div><b>' + (now ? now.rank + '<small>位</small>' : '—') + '</b><span>今日の順位</span></div><div><b>' + best + '<small>位</small></b><span>最高順位</span></div><div><b>' + ins.length + '<small>日</small></b><span>ランクインした日数</span></div></div>' +
+          (function(){ var q = pulseOf(id); if (!q) return ""; var dd = function(v){ return v == null ? "" : '<em class="' + (v > 0 ? 'up' : '') + '">' + (v > 0 ? '+' : '') + v.toLocaleString("ja-JP") + '</em>'; };
+            return '<div class="kpis two"><div><b>' + (q.acc != null ? q.acc.toLocaleString("ja-JP") : '—') + '</b><span>アクセス数' + dd(q.dAcc) + '</span></div><div><b>' + (q.fav != null ? q.fav.toLocaleString("ja-JP") + '<small>人</small>' : '—') + '</b><span>お気に入り登録' + dd(q.dFav) + '</span></div></div>' +
+              '<p class="lead" style="margin:4px 0 0;font-size:11.5px">BUYMAの商品ページに公開されている数字です(販売数ではありません)。' + (plPrev ? '緑の数字は' + md(plPrevDate) + 'からの増加分です。' : '') + '</p>'; })() +
           '<div class="sh-h">順位の推移</div><div class="sh-chart">' + rankChart(ser) + '</div>' +
           (hist.length < 7 ? '<p class="lead">データは毎日1日分ずつ増えていきます(最大30日分)。</p>' : '');
       } else {

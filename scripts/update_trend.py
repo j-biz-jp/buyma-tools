@@ -129,6 +129,29 @@ def parse_brands(html):
     return brands, luxury, updated_date(soup)
 
 
+PULSE_N = 30         # アクセス数・お気に入り数を読みにいく商品の数(上位から)
+PULSE_WAIT = 2       # 1商品ごとに空ける秒数(BUYMAに負担をかけないため)
+RE_ACCESS = re.compile(r"アクセス[:：]\s*([\d,]+)")
+RE_FAV = re.compile(r"お気に入りアイテム登録[:：]\s*([\d,]+)\s*人")
+
+
+def fetch_pulse(items):
+    """上位の商品ページから、公開されているアクセス数とお気に入り登録数を読む"""
+    out = {}
+    for row in items[:PULSE_N]:
+        item_id = row[1]
+        try:
+            time.sleep(PULSE_WAIT)
+            text = BeautifulSoup(fetch(f"https://www.buyma.com/item/{item_id}/"), "html.parser").get_text(" ")
+            a, f = RE_ACCESS.search(text), RE_FAV.search(text)
+            if a or f:
+                out[item_id] = [int(a.group(1).replace(",", "")) if a else None,
+                                int(f.group(1).replace(",", "")) if f else None]
+        except Exception as e:
+            print(f"[注意] 商品 {item_id} のアクセス数を読めませんでした: {e}")
+    return out
+
+
 FX_URL = "https://api.frankfurter.dev/v1/latest?base=JPY&symbols=USD,EUR,GBP,KRW,HKD,CNY,AUD,CAD,CHF"
 
 
@@ -169,6 +192,12 @@ def main():
     history.append({"date": day, "items": items})
     history = sorted(history, key=lambda h: h["date"])[-KEEP_DAYS:]
 
+    pulse = [p for p in old.get("pulse", []) if p.get("date") != today]
+    got = fetch_pulse(items)
+    if got:
+        pulse.append({"date": today, "s": got})
+    pulse = sorted(pulse, key=lambda p: p["date"])[-KEEP_DAYS:]
+
     data = {
         "fetchedAt": today,
         "itemsUpdated": items_upd or old.get("itemsUpdated", ""),
@@ -177,11 +206,12 @@ def main():
         "history": history,
         "luxury": luxury or old.get("luxury", []),
         "fx": fetch_fx() or old.get("fx"),
+        "pulse": pulse,
     }
     DATA.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     top = items[0]
     print(f"[完了] {today} 更新 / アイテム {len(items)}件 / ブランド {len(brands)}件 / "
-          f"ハイブランド {len(luxury)}件 / 1位: {top[2]} {top[3]}")
+          f"ハイブランド {len(luxury)}件 / 注目度 {len(got)}件 / 1位: {top[2]} {top[3]}")
     return 0
 
 
