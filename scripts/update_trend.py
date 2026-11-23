@@ -42,6 +42,14 @@ LUXURY = [
     "VALENTINO", "GIVENCHY", "TOD'S",
 ]
 USED = re.compile(r"中古|ランク[:：]")
+IMG = re.compile(r"/imgdata/item/([0-9]+/[0-9]+/[0-9]+)/")
+
+
+def img_key(node):
+    """商品写真のURLから、写真を表す短い文字列(例 260921/0138130766/838142298)を取り出す"""
+    img = node.select_one("img") if node else None
+    m = IMG.search((img.get("src") or img.get("data-src") or "") if img else "")
+    return m.group(1) if m else ""
 
 
 def jst_today():
@@ -84,7 +92,7 @@ def parse_items(html):
         if brand.lower() == "null":
             brand = ""
         rows.append([rank, item_id, brand, clean(a.get("data-ga-item-name", "")), price,
-                     clean(a.get("data-ga-item-category", ""))])
+                     clean(a.get("data-ga-item-category", "")), img_key(li)])
     rows.sort(key=lambda r: r[0])
     return rows, updated_date(soup)
 
@@ -107,7 +115,7 @@ def parse_brands(html):
                 price = int(a.get("data-ga-price", "0"))
             except ValueError:
                 continue
-            items.append([pos, a.get("data-ga-item-id", ""), name, price])
+            items.append([pos, a.get("data-ga-item-id", ""), name, price, img_key(li)])
         blocks.append({"brand": clean(en.get_text()), "kana": clean(jp.get_text() if jp else ""), "items": items})
     brands = [[b["brand"], b["kana"]] for b in blocks[:20]]
     luxury = []
