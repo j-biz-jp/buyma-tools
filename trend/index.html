@@ -161,6 +161,14 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .pc .fx{font-size:11px;color:var(--sub);margin-top:8px;line-height:1.6}
 .pf{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:var(--up);border:1px solid var(--up);border-radius:3px;padding:0 5px;vertical-align:1px}
 .pf.neg{color:var(--down);border-color:var(--down)}
+.pcin{border:1.5px solid var(--ink);border-radius:12px;padding:18px 16px 6px;margin-top:28px}
+.pcin .strip{margin:12px -16px 0;padding:4px 16px 12px}
+.pcflow{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;counter-reset:f}
+.pcflow li{counter-increment:f;background:var(--stone);border-radius:8px;padding:10px 8px;font-size:11px;color:var(--sub);line-height:1.5}
+.pcflow li::before{content:counter(f);display:block;width:20px;height:20px;line-height:20px;border-radius:10px;background:var(--ink);color:#fff;text-align:center;font-size:11px;font-weight:700;margin-bottom:6px}
+.pcflow b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:2px}
+.card .go{display:block;margin-top:6px;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--ink);border-radius:6px;padding:6px 0}
+.calc{display:inline-block;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--ink);border:1px solid var(--ink);border-radius:999px;padding:2px 10px;background:#fff;cursor:pointer}
 /* brand momentum */
 .bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
@@ -282,6 +290,12 @@ body:not(.locked) #gate{display:none}
     <div class="feature" id="feature"></div>
     <div class="strip" id="top10" aria-label="人気TOP10"></div>
     <div class="notes" id="notes"></div>
+    <section class="pcin">
+      <h2>利益チェッカー</h2>
+      <p class="lead">商品を選んで海外の価格を入れるだけで、BUYMAで売ったときの利益の目安がわかります。為替は毎日自動で更新されます。</p>
+      <ol class="pcflow"><li><b>商品を選ぶ</b>下の商品か、ランキングの「利益を計算」から</li><li><b>海外で探す</b>国のボタンを押すと、その国で検索できます</li><li><b>価格を入れる</b>利益と利益率がすぐ出ます</li></ol>
+      <div class="strip" id="pcpick"></div>
+    </section>
     <section>
       <h2>今朝の動き</h2>
       <p class="lead" id="riselead">前回と比べて、順位を大きく上げた商品と、新しく入った商品です。</p>
@@ -434,7 +448,7 @@ body:not(.locked) #gate{display:none}
       var url = 'https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/';
       return '<div class="row' + (it.rank <= 3 ? ' top' : '') + '"><div class="rk"><div class="num">' + (o.rankText || it.rank) + '</div>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
         '<a href="' + url + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' + pic(it.img, 210, "") + '</a>' +
-        '<a href="' + url + '" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div><div class="pr">' + yen(it.price) + pfBadge(it.id) + '</div></a>' +
+        '<a href="' + url + '" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div><div class="pr">' + yen(it.price) + pfBadge(it.id) + '</div><span class="calc" data-pc="' + esc(it.id) + '">利益を計算</span></a>' +
         '<button class="heart' + (on ? ' on' : '') + '" type="button" data-id="' + esc(it.id) + '" aria-pressed="' + on + '" aria-label="気になるリストに入れる">' + HEART + '</button></div>';
     }
     function wire(el){
@@ -489,6 +503,11 @@ body:not(.locked) #gate{display:none}
       var p = prev ? prevRank[it.id] : null, tag = prev ? (p === undefined ? '<span class="tag" style="background:var(--wine)">NEW</span>' : p - it.rank >= 5 ? '<span class="tag">↑' + (p - it.rank) + '</span>' : '') : '';
       return '<a class="card" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="rk' + (it.rank <= 3 ? ' w' : '') + '">' + it.rank + '</span>' + tag +
         '<div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div></a>';
+    }).join("");
+
+    var picks = items.filter(function(it){ return /\d/.test(it.name) && it.img; }).slice(0, 8);
+    $("pcpick").innerHTML = picks.map(function(it){
+      return '<a class="card" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" data-pc="' + esc(it.id) + '" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="rk' + (it.rank <= 3 ? ' w' : '') + '">' + it.rank + '</span><div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div><span class="go">利益を計算</span></a>';
     }).join("");
 
     // notes
@@ -856,7 +875,11 @@ body:not(.locked) #gate{display:none}
       if (e.target.closest(".heart") || e.target.closest("#sheet")) return;
       var a = e.target.closest('a[href*="buyma.com/item/"]'); if (!a) return;
       var m = a.getAttribute("href").match(/item\/(\d+)\//);
-      if (m && openSheet(m[1])) e.preventDefault();
+      var toCalc = !!(e.target.closest("[data-pc]"));
+      if (m && openSheet(m[1])) {
+        e.preventDefault();
+        if (toCalc) setTimeout(function(){ var pc = $("shbody").querySelector(".pc"); if (pc) { pc.scrollIntoView({behavior:"smooth", block:"start"}); } }, 80);
+      }
     });
 
   }
