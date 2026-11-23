@@ -205,6 +205,7 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .kpis em.up{color:var(--up)}
 .card .gtag{position:absolute;top:6px;right:6px;background:rgba(255,255,255,.92);color:var(--ink);font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px}
 #csex{margin-top:10px}
+.howto{display:inline-block;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--ink)}
 /* brand momentum */
 .bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
@@ -320,6 +321,7 @@ body:not(.locked) #gate{display:none}
     <div class="for">BUYMAパートナー専用ツール</div>
     <h1>BUYMA トレンドレーダー</h1>
     <div class="when"><b id="date"></b><span id="upd">読み込み中</span></div>
+    <a class="howto" href="../guide/">使い方ガイドを見る</a>
   </header>
 
   <div class="view" id="v-today">
@@ -834,7 +836,8 @@ body:not(.locked) #gate{display:none}
       if (window.innerHeight + window.pageYOffset >= document.body.scrollHeight - 4) cur = "my";
       mark(cur);
     }
-    window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
+    window.addEventListener("scroll", onScroll, {passive:true});
+    mark("today"); window.addEventListener("load", onScroll); setTimeout(onScroll, 1500);
 
 
     // ---------- 利益チェッカー ----------

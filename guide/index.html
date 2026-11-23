@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BUYMA トレンドレーダー 使い方ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#000;--text:#2e2b28;--sub:#7a746c;--rule:#dcd6ce;--stone:#efece7;--wine:#6b1e2a;--winel:#f4e9ea;--up:#2f6b3a}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:#fff;color:var(--text);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:15.5px;line-height:1.8;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--wine);outline-offset:2px}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px 80px}
+.num{font-family:"Bodoni Moda",serif;font-weight:700;font-variant-numeric:lining-nums;line-height:1}
+
+header{padding:36px 0 22px;border-bottom:2px solid var(--ink)}
+.for{font-size:12px;color:var(--sub)}
+h1{margin:6px 0 8px;font-size:28px;font-weight:900;color:var(--ink);line-height:1.3;letter-spacing:.02em}
+.intro{margin:0;font-size:14.5px}
+.toc{margin:22px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:13.5px}
+.toc a{display:flex;gap:8px;text-decoration:none;padding:6px 0;border-bottom:1px solid var(--rule)}
+.toc .num{font-size:15px;color:var(--wine);min-width:18px}
+
+section{padding-top:44px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sh .num{font-size:44px;color:var(--wine)}
+h2{margin:0;font-size:21px;font-weight:900;color:var(--ink);line-height:1.35}
+.lead{margin:4px 0 0;color:var(--sub);font-size:14px}
+p{margin:10px 0 0}
+strong{color:var(--ink)}
+
+.shot{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:22px;align-items:start;margin-top:18px}
+.shot img{display:block;width:100%;height:auto;border:1px solid var(--rule);border-radius:14px;box-shadow:0 1px 0 var(--rule)}
+.shot ol,.shot ul{margin:0;padding:0;list-style:none}
+.pts li{position:relative;padding:0 0 12px 30px;font-size:14.5px}
+.pts li::before{content:counter(p);counter-increment:p;position:absolute;left:0;top:2px;width:21px;height:21px;border-radius:11px;background:var(--ink);color:#fff;font-size:11.5px;font-weight:700;text-align:center;line-height:21px}
+.pts{counter-reset:p}
+.pts b{color:var(--ink)}
+.tip{margin-top:14px;background:var(--stone);border-radius:10px;padding:12px 14px;font-size:13.5px}
+.tip b{color:var(--ink)}
+@media (max-width:560px){ .shot{grid-template-columns:1fr} .shot img{max-width:300px;margin:0 auto} }
+
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding:0;list-style:none}
+.steps3 li{background:var(--stone);border-radius:10px;padding:12px 10px;font-size:12.5px;color:var(--sub);line-height:1.6}
+.steps3 .num{display:block;font-size:22px;color:var(--wine);margin-bottom:4px}
+.steps3 b{display:block;color:var(--ink);font-size:13.5px}
+
+.route{margin-top:16px;border:1.5px solid var(--ink);border-radius:12px;padding:6px 16px}
+.route div{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule);font-size:14.5px}
+.route div:last-child{border-bottom:none}
+.route span{font-weight:900;color:var(--wine);font-size:13px}
+
+dl.faq{margin:16px 0 0}
+.faq dt{font-weight:900;color:var(--ink);padding-top:14px;border-top:1px solid var(--rule);margin-top:14px}
+.faq dt:first-child{border-top:none;margin-top:0;padding-top:0}
+.faq dd{margin:4px 0 0;font-size:14.5px}
+
+.home{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.home div{border:1px solid var(--rule);border-radius:10px;padding:12px 14px;font-size:13.5px}
+.home b{display:block;color:var(--ink);margin-bottom:4px}
+@media (max-width:480px){ .home{grid-template-columns:1fr} .toc{grid-template-columns:1fr} .steps3{grid-template-columns:1fr} }
+
+.go{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:40px}
+.go a{display:block;text-align:center;text-decoration:none;font-weight:700;padding:14px;border-radius:10px;border:1.5px solid var(--ink);color:var(--ink)}
+.go a.main{background:var(--ink);color:#fff}
+footer{margin-top:40px;padding-top:14px;border-top:2px solid var(--ink);font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="for">BUYMAパートナー専用ツール</div>
+    <h1>BUYMA トレンドレーダー<br>使い方ガイド</h1>
+    <p class="intro">BUYMAでいま何が売れているかを、写真つきで毎日確認できるツールです。開き方から、それぞれの画面の見方、毎日の使い方までをまとめました。5分ほどで読めます。</p>
+    <ul class="toc">
+      <li><a href="#s1"><span class="num">1</span>はじめに(開き方)</a></li>
+      <li><a href="#s2"><span class="num">2</span>今日の人気商品</a></li>
+      <li><a href="#s3"><span class="num">3</span>売れ筋メモと仕入れ目安</a></li>
+      <li><a href="#s4"><span class="num">4</span>今朝の動き</a></li>
+      <li><a href="#s5"><span class="num">5</span>ランキング</a></li>
+      <li><a href="#s6"><span class="num">6</span>商品カルテ</a></li>
+      <li><a href="#s7"><span class="num">7</span>利益チェッカー</a></li>
+      <li><a href="#s8"><span class="num">8</span>トレンド</a></li>
+      <li><a href="#s9"><span class="num">9</span>気になるリスト</a></li>
+      <li><a href="#s10"><span class="num">10</span>毎日の使い方・よくある質問</a></li>
+    </ul>
+  </header>
+
+  <section id="s1">
+    <div class="sh"><span class="num">1</span><h2>はじめに(開き方)</h2></div>
+    <div class="shot">
+      <img src="img/01-login.jpg" alt="パスワードの入力画面" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>お知らせしたURLを開くと、パスワードの画面が出ます。</li>
+        <li>お知らせした<b>パスワードを入れて「開く」</b>を押します。</li>
+        <li>一度入れると、同じスマホ・パソコンでは次から入力なしで開けます。</li>
+      </ol>
+    </div>
+    <p><strong>ホーム画面に追加しておくと便利です。</strong>アプリのようにワンタップで開けます。</p>
+    <div class="home">
+      <div><b>iPhone(Safari)</b>画面下の共有ボタン(四角から矢印が出たマーク)→「ホーム画面に追加」</div>
+      <div><b>Android(Chrome)</b>右上の「︙」メニュー →「ホーム画面に追加」</div>
+    </div>
+  </section>
+
+  <section id="s2">
+    <div class="sh"><span class="num">2</span><h2>今日の人気商品</h2></div>
+    <p class="lead">ページを開いて最初に見える部分です。</p>
+    <div class="shot">
+      <img src="img/02-top.jpg" alt="今日の1位と人気商品の写真" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>右上の日付が、表示している<b>BUYMAのランキングの日付</b>です。</li>
+        <li>大きな写真が<b>今日の人気1位</b>。その下に2位以降の写真が横に並び、指で横にスライドできます。</li>
+        <li>写真の右上の<b>「↑20」</b>は前回から順位が上がった数、<b>「NEW」</b>は新しくランクインした商品です。</li>
+        <li>画面の下のボタンを押すと、<b>今日・ランキング・トレンド・気になる</b>の場所へジャンプします。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="s3">
+    <div class="sh"><span class="num">3</span><h2>売れ筋メモと仕入れ目安</h2></div>
+    <div class="shot">
+      <img src="img/03-memo-guide.jpg" alt="今朝の売れ筋メモと人気商品の仕入れ目安" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li><b>今朝の売れ筋メモ</b>は、いま売れているジャンルや、よく見かけるブランドを短い文章でまとめたものです。まずここを読むと全体がつかめます。</li>
+        <li><b>人気商品の仕入れ目安</b>には、3万円以上の人気商品が、ジャンルを混ぜて並びます。「3〜10万円」「10万円以上」で切り替えられます。</li>
+        <li>「仕入れ目安 $321以下」は、<b>海外でこの金額以下で買えれば、利益率10%を確保できる</b>という目安です。送料・関税の目安も含めて計算しています。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="s4">
+    <div class="sh"><span class="num">4</span><h2>今朝の動き</h2></div>
+    <div class="shot">
+      <img src="img/04-moves.jpg" alt="順位を大きく上げた商品の一覧" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li><b>急上昇</b>:前回のランキングから大きく順位を上げた商品です。「89位 → 33位」のように動きが見られます。</li>
+        <li><b>初登場</b>:新しく上位100件に入った商品です。</li>
+        <li><b>お気に入りの伸び</b>:BUYMAでお気に入り登録が大きく増えた商品です。これから売れそうな商品の手がかりになります。</li>
+      </ol>
+    </div>
+    <div class="tip"><b>見るポイント</b>　急上昇や初登場が続くブランドは、いま注目が集まっているサインです。</div>
+  </section>
+
+  <section id="s5">
+    <div class="sh"><span class="num">5</span><h2>ランキング</h2></div>
+    <div class="shot">
+      <img src="img/05-ranking.jpg" alt="人気ランキングの一覧" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li><b>人気ランキング</b>はBUYMA公式の総合ランキングです。「3万円未満」「3〜10万円」「10万円以上」で価格帯ごとに見られます。</li>
+        <li>順位の下の<b>「↑5」「↓1」</b>は前回からの動きです。</li>
+        <li>価格の横の<b>「♡2,584」</b>は、BUYMAでのお気に入り登録数です(販売数ではありません)。</li>
+      </ol>
+    </div>
+    <div class="shot">
+      <img src="img/06-genre.jpg" alt="ジャンル別ランキング" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li><b>ジャンル別ランキング</b>では、バッグ・財布・小物・アクセサリー・靴・腕時計・アイウェアの人気商品を見られます。</li>
+        <li>「レディース」「メンズ」で切り替えられます。</li>
+        <li>服以外のジャンルで出品する商品を探すときに使ってください。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="s6">
+    <div class="sh"><span class="num">6</span><h2>商品カルテ</h2></div>
+    <p class="lead">写真や商品名を押すと、その商品の詳しい画面が下から開きます。</p>
+    <div class="shot">
+      <img src="img/07-karte.jpg" alt="商品カルテの画面" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>大きな写真と、<b>今日の順位・最高順位・ランクインした日数</b>が見られます。</li>
+        <li><b>アクセス数</b>と<b>お気に入り登録数</b>は、BUYMAの商品ページに公開されている数字です。前日からの増加分も表示されます。</li>
+        <li>下にスクロールすると、<b>順位の推移グラフ</b>と<b>利益チェッカー</b>があります。</li>
+        <li>閉じるときは右上の「×」か、画面の暗い部分を押します。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="s7">
+    <div class="sh"><span class="num">7</span><h2>利益チェッカー</h2></div>
+    <p class="lead">商品カルテの中、またはランキングの「利益を計算」ボタンから開けます。</p>
+    <ul class="steps3">
+      <li><span class="num">1</span><b>上限を見る</b>海外でいくら以下で買えばいいかが、国別に出ます</li>
+      <li><span class="num">2</span><b>海外で探す</b>国のボタンで、その国のお店を検索します</li>
+      <li><span class="num">3</span><b>価格を入れる</b>見つけた価格を入れると利益を計算します</li>
+    </ul>
+    <div class="shot">
+      <img src="img/08-checker.jpg" alt="利益チェッカーの仕入れ値の上限" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>上の<b>「利益率 10% / 15% / 20%」</b>で目標を選ぶと、仕入れ値の上限が変わります。</li>
+        <li>アメリカ・ヨーロッパ・イギリス・韓国の上限が出ます。「ほかの通貨で見る」で香港ドルなども見られます。</li>
+        <li><b>「海外のお店で探す」</b>のボタンで、その国のGoogleショッピングを検索します。安く見つけたいときは<b>「セール・アウトレットで探す」</b>を使います。</li>
+      </ol>
+    </div>
+    <div class="shot">
+      <img src="img/09-result.jpg" alt="利益の計算結果" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>見つけた価格と通貨を入れると、<b>利益の目安と利益率</b>がすぐ出ます。</li>
+        <li>BUYMA手数料・仕入れ値(円に換算)・送料・関税と輸入消費税の内訳も見られます。</li>
+        <li>送料や手数料の率は、「送料・関税・手数料を変える」から自分の条件に合わせて変えられます。</li>
+      </ol>
+    </div>
+    <div class="tip"><b>数字は目安です</b>　為替は毎日自動で更新される参考レートです。送料はジャンルごとの目安、関税・輸入消費税は税関の税率をもとにした概算です。実際の金額は、配送方法や素材・原産国で変わります。</div>
+  </section>
+
+  <section id="s8">
+    <div class="sh"><span class="num">8</span><h2>トレンド</h2></div>
+    <div class="shot">
+      <img src="img/10-genres.jpg" alt="ジャンルごとの写真一覧" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li><b>いま売れているジャンル</b>:上位100件を、写真1枚=1商品でジャンルごとに並べています。</li>
+        <li>写真の多さで、どのジャンルが強いかがひと目でわかります。</li>
+      </ol>
+    </div>
+    <div class="shot">
+      <img src="img/11-brand.jpg" alt="ブランドの勢いのグラフ" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li><b>ブランドの勢い</b>:ブランドを選ぶと、上位100件に何件入っているかの推移をグラフで見られます。</li>
+        <li>下には、そのブランドでいまランクインしている商品の写真が並びます。</li>
+        <li>グラフは毎日1日分ずつ増え、最大30日分の流れが見られるようになります。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="s9">
+    <div class="sh"><span class="num">9</span><h2>気になるリスト</h2></div>
+    <div class="shot">
+      <img src="img/12-watch.jpg" alt="気になるリスト" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>商品の<b>ハート(♡)</b>を押すと、気になるリストに入ります。</li>
+        <li>毎日、<b>入れた日から順位がどう動いたか</b>を確認できます。</li>
+        <li>リストは<b>お使いのスマホ・パソコンにだけ保存</b>され、ほかの人には見えません。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="s10">
+    <div class="sh"><span class="num">10</span><h2>毎日の使い方</h2></div>
+    <p class="lead">毎日数分、この順番で見るのがおすすめです。</p>
+    <div class="route">
+      <div><span>1分</span>「今朝の売れ筋メモ」を読んで、いま売れているジャンルとブランドをつかむ</div>
+      <div><span>1分</span>「今朝の動き」で、急上昇・初登場の商品をチェックする</div>
+      <div><span>1分</span>気になった商品にハートを付けて、翌日以降の動きを追いかける</div>
+      <div><span>週1回</span>気になる商品を開いて、利益チェッカーで仕入れ値の目安を確認する</div>
+    </div>
+
+    <h2 style="margin-top:40px">よくある質問</h2>
+    <dl class="faq">
+      <dt>ランキングはいつ更新されますか?</dt>
+      <dd>BUYMAがランキングを更新したあと、1時間ほどで自動的に新しくなります。右上の日付が、表示しているランキングの日付です。</dd>
+      <dt>「♡」の数字は売れた数ですか?</dt>
+      <dd>いいえ。BUYMAの商品ページに公開されている「お気に入り登録数」です。BUYMAは商品ごとの販売数を公開していないため、人気の目安としてご覧ください。</dd>
+      <dt>スマホとパソコンで、気になるリストは共有されますか?</dt>
+      <dd>されません。それぞれの端末に保存されます。ブラウザのデータを削除すると、リストも消えます。</dd>
+      <dt>美容・コスメの商品が出てきません</dt>
+      <dd>このツールでは、美容・コスメの商品は除いて表示しています。そのため、順位の番号が飛ぶことがあります。</dd>
+      <dt>パスワードをもう一度入れる画面が出ました</dt>
+      <dd>ブラウザのデータが削除された可能性があります。お知らせしたパスワードを入れ直せば、そのまま使えます。</dd>
+    </dl>
+  </section>
+
+  <section>
+    <div class="sh"><h2>もう一つのツール:ショップ準備ステップ</h2></div>
+    <div class="shot">
+      <img src="img/13-steps.jpg" alt="ショップ準備ステップ" width="640" height="867" loading="lazy">
+      <ol class="pts">
+        <li>BUYMAでの作業を、<b>5つのステップ</b>で練習しながら体験できます。</li>
+        <li>1つ10分ほどで、クリアすると次のステップが開きます。</li>
+        <li>入力した内容はそのまま保存され、あとから見返せます。</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="go">
+    <a class="main" href="../trend/">トレンドレーダーを開く</a>
+    <a href="../steps/">ショップ準備ステップを開く</a>
+  </div>
+
+  <footer>このガイドの画面は2026年11月時点のものです。ランキングの中身は毎日変わります。</footer>
+</div>
+</body>
+</html>
