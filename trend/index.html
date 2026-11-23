@@ -135,6 +135,32 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .gw .tiles a{display:block}
 .gw .tiles img{border-radius:2px}
 .gw:first-child .h{color:var(--wine)}
+/* profit checker */
+.pc{margin-top:22px;border:1.5px solid var(--ink);border-radius:12px;padding:16px}
+.pc h4{margin:0;font-size:16px;font-weight:900;color:var(--ink)}
+.pc .sub{font-size:12px;color:var(--sub);margin:2px 0 0}
+.pc .stp{font-size:12.5px;font-weight:900;color:var(--ink);margin:14px 0 6px}
+.pc .stp span{display:inline-block;width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--ink);color:#fff;text-align:center;font-size:11px;margin-right:6px}
+.regions{display:flex;flex-wrap:wrap;gap:6px}
+.regions a{font-size:12.5px;font-weight:700;border:1px solid var(--rule);border-radius:999px;padding:6px 12px;color:var(--ink)}
+.regions a:active{background:var(--stone)}
+.pc .q{font-size:11.5px;color:var(--sub);margin-top:6px;word-break:break-all}
+.pin{display:grid;grid-template-columns:1fr 132px;gap:6px}
+.pc input,.pc select{font:inherit;font-size:16px;padding:10px;border:1px solid #cfc8bd;border-radius:6px;width:100%;background:#fff;color:var(--ink)}
+.pc .opt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pc label{display:block;font-size:11.5px;color:var(--sub);margin-bottom:3px}
+.res{margin-top:14px;background:var(--stone);border-radius:10px;padding:14px}
+.res .big{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.res .big span{font-size:13px;font-weight:700;color:var(--ink)}
+.res .big b{font-size:30px;font-weight:900;color:var(--up);letter-spacing:-.01em}
+.res .big b.neg{color:var(--down)}
+.res .rate{font-size:12px;color:var(--sub);text-align:right}
+.res dl{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:10px 0 0;font-size:13px}
+.res dt{color:var(--sub)} .res dd{margin:0;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.res .empty2{font-size:13px;color:var(--sub)}
+.pc .fx{font-size:11px;color:var(--sub);margin-top:8px;line-height:1.6}
+.pf{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;color:var(--up);border:1px solid var(--up);border-radius:3px;padding:0 5px;vertical-align:1px}
+.pf.neg{color:var(--down);border-color:var(--down)}
 /* brand momentum */
 .bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
@@ -311,6 +337,11 @@ body:not(.locked) #gate{display:none}
       <p class="lead">ハートを押した商品の今日の順位です。矢印は、リストに入れた日からの動きです。</p>
       <div id="watch"></div>
     </section>
+    <section id="profsec" hidden>
+      <h2>利益をチェックした商品</h2>
+      <p class="lead">利益チェッカーで計算した商品です。利益の目安が大きい順に並んでいます。</p>
+      <div id="profit"></div>
+    </section>
   </div>
 
   <footer>BUYMA公式の人気ランキングをもとに、毎日自動で更新しています。美容・コスメの商品は載せていません。気になるリストは、お使いのスマホやパソコンにだけ保存されます。</footer>
@@ -361,6 +392,8 @@ body:not(.locked) #gate{display:none}
   $("date").textContent = (now.getMonth() + 1) + "月" + now.getDate() + "日(" + wk[now.getDay()] + ")";
 
   var watch = store.get("tr_watch", {});
+  var PROF = store.get("tr_profit", {});
+  function pfBadge(id){ var p = PROF[id]; if (!p || p.profit == null) return ""; return '<span class="pf' + (p.profit < 0 ? ' neg' : '') + '">利益目安 ' + (p.profit < 0 ? '-' : '+') + '¥' + Math.abs(Math.round(p.profit)).toLocaleString("ja-JP") + '</span>'; }
 
   fetch("data.json", {cache:"no-store"}).then(function(r){ return r.json(); }).then(render).catch(function(){
     $("upd").textContent = "データを読み込めませんでした。少し時間をおいて開き直してください。";
@@ -401,7 +434,7 @@ body:not(.locked) #gate{display:none}
       var url = 'https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/';
       return '<div class="row' + (it.rank <= 3 ? ' top' : '') + '"><div class="rk"><div class="num">' + (o.rankText || it.rank) + '</div>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
         '<a href="' + url + '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">' + pic(it.img, 210, "") + '</a>' +
-        '<a href="' + url + '" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div><div class="pr">' + yen(it.price) + '</div></a>' +
+        '<a href="' + url + '" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div><div class="pr">' + yen(it.price) + pfBadge(it.id) + '</div></a>' +
         '<button class="heart' + (on ? ' on' : '') + '" type="button" data-id="' + esc(it.id) + '" aria-pressed="' + on + '" aria-label="気になるリストに入れる">' + HEART + '</button></div>';
     }
     function wire(el){
@@ -550,7 +583,16 @@ body:not(.locked) #gate{display:none}
       wire($("lux"));
     }
 
-    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); }
+    function drawProfit(){
+      var ids = Object.keys(PROF).filter(function(id){ return PROF[id].profit != null; }).sort(function(a,b){ return PROF[b].profit - PROF[a].profit; });
+      $("profsec").hidden = !ids.length;
+      $("profit").innerHTML = ids.map(function(id){
+        var q = PROF[id], it = byId[id] || {id:id, name:q.name || "", brand:q.brand || "", price:q.price || 0, img:q.img || "", rank:999};
+        return row(it, it.rank === 999 ? {rankText:"—", sub:'<span class="mv st">圏外</span>'} : {});
+      }).join("");
+      wire($("profit"));
+    }
+    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); drawProfit(); }
     drawAll();
 
     $("genres").innerHTML = gs.map(function(g){
@@ -678,10 +720,74 @@ body:not(.locked) #gate{display:none}
     }
     window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
 
+
+    // ---------- 利益チェッカー ----------
+    var FX = (D.fx && D.fx.jpy) || {};
+    var CURS = [["USD","ドル"],["EUR","ユーロ"],["GBP","ポンド"],["KRW","ウォン"],["CHF","スイスフラン"],["HKD","香港ドル"],["CNY","人民元"],["AUD","豪ドル"],["CAD","カナダドル"]].filter(function(c){ return FX[c[0]]; });
+    var REGIONS = [["アメリカ","us","en","USD"],["イギリス","uk","en","GBP"],["イタリア","it","it","EUR"],["フランス","fr","fr","EUR"],["ドイツ","de","de","EUR"],["韓国","kr","ko","KRW"]];
+    function modelCode(name){
+      var toks = name.replace(/[【】\[\]()（）☆★♪◆◇●○■□|｜/]/g, " ").split(/\s+/).filter(function(t){ return /^[A-Za-z0-9-_.]{5,}$/.test(t) && /\d/.test(t) && /[A-Za-z]|\d{6,}/.test(t); });
+      return toks.length ? toks[toks.length - 1] : "";
+    }
+    function searchWords(it){
+      var code = modelCode(it.name);
+      if (code) return (it.brand ? it.brand + " " : "") + code;
+      var nm = it.name;
+      if (it.brand) nm = nm.split(it.brand).join(" ").replace(new RegExp(it.brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig"), " ");
+      nm = nm.replace(/[【】\[\]☆★♪◆◇●○■□!！?？※]|国内発送?|国内即発|即発|送料込み?|関税込み?|大人気|人気|新作|直営店|お早めに|正規品|限定|セール|SALE/gi, " ").replace(/\s+/g, " ").trim();
+      return ((it.brand ? it.brand + " " : "") + nm).slice(0, 60);
+    }
+    var feeRate = store.get("tr_fee", 0.077);
+    function checkerHtml(it){
+      var p = PROF[it.id] || {};
+      var words = searchWords(it);
+      var fxd = D.fx && D.fx.date ? md(D.fx.date) : "";
+      return '<div class="pc"><h4>利益チェッカー</h4><p class="sub">海外の販売価格を入れると、BUYMAで売ったときの利益の目安を計算します。</p>' +
+        '<div class="stp"><span>1</span>海外のお店で価格を調べる</div><div class="regions">' +
+        REGIONS.map(function(rg){ return '<a href="https://www.google.com/search?tbm=shop&gl=' + rg[1] + '&hl=' + rg[2] + '&q=' + encodeURIComponent(words) + '" target="_blank" rel="noopener" data-cur="' + rg[3] + '">' + rg[0] + '</a>'; }).join("") +
+        '</div><div class="q">検索する言葉:' + esc(words) + '</div>' +
+        '<div class="stp"><span>2</span>見つけた価格を入れる</div>' +
+        '<div class="pin"><input id="pc_p" type="number" inputmode="decimal" min="0" step="any" placeholder="例 450" value="' + (p.p != null ? p.p : "") + '" aria-label="海外の価格"><select id="pc_c" aria-label="通貨">' +
+        CURS.map(function(c){ return '<option value="' + c[0] + '"' + ((p.cur || "USD") === c[0] ? " selected" : "") + '>' + c[0] + ' ' + c[1] + '</option>'; }).join("") + '</select></div>' +
+        '<div class="opt"><div><label for="pc_s">送料(円)</label><input id="pc_s" type="number" inputmode="numeric" min="0" value="' + (p.ship != null ? p.ship : 0) + '"></div>' +
+        '<div><label for="pc_d">関税など(円)</label><input id="pc_d" type="number" inputmode="numeric" min="0" value="' + (p.duty != null ? p.duty : 0) + '"></div></div>' +
+        '<div class="opt" style="grid-template-columns:1fr"><div><label for="pc_f">BUYMAの手数料</label><select id="pc_f"><option value="0.077"' + (feeRate !== 0.055 ? " selected" : "") + '>7.7%(一般)</option><option value="0.055"' + (feeRate === 0.055 ? " selected" : "") + '>5.5%(プレミアムパーソナルショッパー)</option></select></div></div>' +
+        '<div class="res" id="pc_r"></div>' +
+        '<div class="fx">為替は' + (fxd ? fxd + 'の' : '') + '参考レート(欧州中央銀行)で、毎日自動で更新されます。カード会社の為替手数料などは含みません。あくまで目安としてお使いください。</div></div>';
+    }
+    function wireChecker(it){
+      var ids = ["pc_p","pc_c","pc_s","pc_d","pc_f"];
+      function calc(){
+        var price = parseFloat($("pc_p").value), cur = $("pc_c").value, ship = +$("pc_s").value || 0, duty = +$("pc_d").value || 0, fr = +$("pc_f").value;
+        feeRate = fr; store.set("tr_fee", fr);
+        if (!(price > 0) || !FX[cur]) {
+          $("pc_r").innerHTML = '<div class="empty2">海外の価格を入れると、ここに利益の目安が出ます。</div>';
+          if (PROF[it.id] && !(price > 0)) { delete PROF[it.id]; store.set("tr_profit", PROF); }
+          return;
+        }
+        var cost = price * FX[cur], fee = it.price * fr, profit = it.price - fee - cost - ship - duty, rate = profit / it.price * 100;
+        var y = function(n){ return (n < 0 ? "-" : "") + "¥" + Math.abs(Math.round(n)).toLocaleString("ja-JP"); };
+        $("pc_r").innerHTML = '<div class="big"><span>利益の目安</span><b class="' + (profit < 0 ? 'neg' : '') + '">' + (profit >= 0 ? '+' : '') + y(profit) + '</b></div>' +
+          '<div class="rate">利益率 ' + rate.toFixed(1) + '%</div>' +
+          '<dl><dt>BUYMAでの価格</dt><dd>' + y(it.price) + '</dd>' +
+          '<dt>BUYMA手数料(' + (fr * 100).toFixed(1) + '%)</dt><dd>-' + y(fee) + '</dd>' +
+          '<dt>仕入れ ' + price.toLocaleString("ja-JP") + ' ' + cur + '<br><small>1' + cur + '=' + FX[cur] + '円</small></dt><dd>-' + y(cost) + '</dd>' +
+          (ship ? '<dt>送料</dt><dd>-' + y(ship) + '</dd>' : '') + (duty ? '<dt>関税など</dt><dd>-' + y(duty) + '</dd>' : '') + '</dl>';
+        PROF[it.id] = {p:price, cur:cur, ship:ship, duty:duty, profit:profit, at:t0, name:it.name, brand:it.brand, price:it.price, img:it.img || ""};
+        store.set("tr_profit", PROF);
+      }
+      ids.forEach(function(i){ $(i).addEventListener("input", calc); $(i).addEventListener("change", function(){ calc(); drawAll(); }); });
+      Array.prototype.forEach.call(document.querySelectorAll(".regions a"), function(a){
+        a.addEventListener("click", function(){ if (!$("pc_p").value) $("pc_c").value = a.dataset.cur; });
+      });
+      calc();
+    }
+
     // ---------- 商品カルテ ----------
     var REG = {};
     items.forEach(function(it){ REG[it.id] = {id:it.id, brand:it.brand, name:it.name, price:it.price, img:it.img}; });
     (D.luxury || []).forEach(function(x){ x.items.forEach(function(a, i){ var id = String(a[1]); if (!REG[id]) REG[id] = {id:id, brand:x.brand, name:a[2], price:a[3], img:a[4] || "", lux:x.brand, luxPos:a[0]}; }); });
+    Object.keys(PROF).forEach(function(id){ var q = PROF[id]; if (!REG[id] && q.name) REG[id] = {id:id, brand:q.brand, name:q.name, price:q.price, img:q.img || ""}; });
     Object.keys(watch).forEach(function(id){ if (!REG[id]) { var w = watch[id]; REG[id] = {id:id, brand:w.brand, name:w.name, price:w.price, img:w.img || ""}; } });
 
     function rankSeries(id){
@@ -726,11 +832,13 @@ body:not(.locked) #gate{display:none}
       } else {
         html += '<p class="lead" style="margin-top:14px">この商品は、人気アイテム上位100件にはまだ入っていません。</p>';
       }
+      html += checkerHtml(it);
       html += '<div class="acts"><a class="act main" href="' + url + '" target="_blank" rel="noopener">BUYMAで商品を見る</a>' +
         '<button class="act' + (on ? ' on' : '') + '" type="button" id="sh_w">' + HEART + (on ? '気になるリストに入っています' : '気になるリストに入れる') + '</button>' +
         '<div class="two">' + (it.brand ? '<a class="act" href="https://www.buyma.com/r/' + encodeURIComponent(it.brand) + '/" target="_blank" rel="noopener">このブランドの人気商品</a>' : '') +
         '<a class="act" href="https://www.google.com/search?q=' + q + '" target="_blank" rel="noopener">ネットで検索する</a></div></div></div>';
       $("shbody").innerHTML = html;
+      wireChecker(it);
       $("sh_w").addEventListener("click", function(){
         if (watch[id]) { delete watch[id]; toast("気になるリストから外しました"); }
         else { watch[id] = {name:it.name, brand:it.brand, price:it.price, img:it.img || "", rank0:now ? now.rank : null, date0:t0}; toast("気になるリストに入れました"); }
@@ -741,7 +849,7 @@ body:not(.locked) #gate{display:none}
       $("sheet").querySelector(".x").focus({preventScroll:true});
       return true;
     }
-    function closeSheet(){ $("sheet").hidden = true; document.body.classList.remove("sheet-open"); shId = null; }
+    function closeSheet(){ drawAll(); $("sheet").hidden = true; document.body.classList.remove("sheet-open"); shId = null; }
     $("sheet").addEventListener("click", function(e){ if (e.target.closest("[data-close]")) closeSheet(); });
     document.addEventListener("keydown", function(e){ if (e.key === "Escape" && shId) closeSheet(); });
     document.addEventListener("click", function(e){

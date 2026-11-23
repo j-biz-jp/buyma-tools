@@ -129,6 +129,23 @@ def parse_brands(html):
     return brands, luxury, updated_date(soup)
 
 
+FX_URL = "https://api.frankfurter.dev/v1/latest?base=JPY&symbols=USD,EUR,GBP,KRW,HKD,CNY,AUD,CAD,CHF"
+
+
+def fetch_fx():
+    """利益チェッカー用の為替レート(欧州中央銀行の参考レート)。1外貨=何円 の形にする"""
+    try:
+        res = requests.get(FX_URL, timeout=20)
+        res.raise_for_status()
+        j = res.json()
+        rates = {k: round(1 / v, 4 if k == "KRW" else 2) for k, v in j.get("rates", {}).items() if v}
+        if len(rates) >= 4:
+            return {"date": j.get("date", ""), "jpy": rates}
+    except Exception as e:  # 為替が取れなくてもランキングの更新は続ける
+        print(f"[注意] 為替レートを取得できませんでした: {e}")
+    return None
+
+
 def main():
     old = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else {}
 
@@ -159,6 +176,7 @@ def main():
         "brands": brands,
         "history": history,
         "luxury": luxury or old.get("luxury", []),
+        "fx": fetch_fx() or old.get("fx"),
     }
     DATA.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     top = items[0]
