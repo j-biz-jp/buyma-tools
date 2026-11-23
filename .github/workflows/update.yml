@@ -2,8 +2,10 @@ name: BUYMAトレンド 毎朝更新
 
 on:
   schedule:
-    # 毎朝 6:42(日本時間)。GitHubの都合で数十分遅れることがあります。
+    # 毎朝 6:42 と お昼 12:42(日本時間)。GitHubの都合で数十分遅れることがあります。
+    # BUYMAのランキング更新が朝より遅い日も、お昼の回で取り込めます。
     - cron: "42 21 * * *"
+    - cron: "42 3 * * *"
   workflow_dispatch: {}
 
 permissions:

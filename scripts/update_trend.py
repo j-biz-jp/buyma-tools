@@ -145,8 +145,11 @@ def main():
         brands, luxury, brands_upd = old.get("brands", []), old.get("luxury", []), old.get("brandsUpdated", "")
 
     today = jst_today()
-    history = [h for h in old.get("history", []) if h.get("date") != today]
-    history.append({"date": today, "items": items})
+    # 履歴の日付は「BUYMAがランキングを更新した日」にする。
+    # BUYMAがまだ更新していない朝は、前日と同じ日付として上書きされるので、同じデータが2日分並ばない。
+    day = items_upd.replace(".", "-") if re.fullmatch(r"\d{4}\.\d{2}\.\d{2}", items_upd or "") else today
+    history = [h for h in old.get("history", []) if h.get("date") != day]
+    history.append({"date": day, "items": items})
     history = sorted(history, key=lambda h: h["date"])[-KEEP_DAYS:]
 
     data = {
