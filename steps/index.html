@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>スタートアップMTG前 ショップ準備ステップ</title>
+<title>ショップ準備ステップ</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f4f0;--card:#fff;--ink:#1f1d1a;--sub:#6b665e;--line:#e6e1d8;--acc:#1f5f5b;--accs:#e3efed;--ok:#2f7a3c;--oks:#e6f2e7;--ng:#a3401e;--ngs:#f8e9e2}
@@ -115,7 +115,7 @@ body:not(.locked) #gate{display:none}
 <div id="gate"><form class="box" id="gateForm" autocomplete="off">
   <div class="for">BUYMAパートナー専用</div>
   <h1>ショップ準備ステップ</h1>
-  <p>スタートアップMTGまでに進める、5つの準備ステップです。担当者からお伝えしたパスワードを入れてください。</p>
+  <p>BUYMAでのショップ運営を、5つのステップで体験できる練習ツールです。パスワードを入れてください。</p>
   <label for="gatePw">パスワード</label>
   <input id="gatePw" type="password" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
   <button type="submit">開く</button>
@@ -138,14 +138,14 @@ body:not(.locked) #gate{display:none}
     var v = document.getElementById("gatePw").value.trim();
     sha(v).then(function(h){
       if (h === H) { try { localStorage.setItem(KEY, H); } catch(err) {} ok(); window.scrollTo(0, 0); }
-      else { document.getElementById("gateErr").textContent = "パスワードが違います。担当者からのLINEをご確認ください。"; }
+      else { document.getElementById("gateErr").textContent = "パスワードが違います。お知らせしたパスワードをご確認ください。"; }
     });
   });
 })();
 </script>
 <div class="wrap">
-  <h1>スタートアップMTG前 ショップ準備ステップ</h1>
-  <p class="lead">スタートアップMTG後に実際にやる作業を、先に少しだけ体験しておきましょう。ステップは全部で5つ。1つ10分くらいで終わります。1つクリアすると、次のステップが開きます。今日やるのは、目の前の1つだけで大丈夫です。</p>
+  <h1>ショップ準備ステップ</h1>
+  <p class="lead">BUYMAで実際にやる作業を、練習しながら体験できます。ステップは全部で5つ。1つ10分くらいで終わります。1つクリアすると、次のステップが開きます。今日やるのは、目の前の1つだけで大丈夫です。</p>
 
   <div class="progress">
     <div class="ptext"><span>準備完了度</span><b id="pct">0%</b></div>
@@ -218,7 +218,7 @@ body:not(.locked) #gate{display:none}
     </div>
     <div class="point">
       <b>送料や手数料は、あなたが別に負担するお金ではありません</b>
-      出品するときに、仕入れ値・送料・手数料をあらかじめ売る値段に含めて決めます。だから、これらはすべてお客様が払う代金の中からまかなわれ、残ったお金があなたの利益になります。「売れたのに手数料で損をした」ということが起きないよう、出品前に金額を決めておくのがポイントです。値段の決め方はスタートアップMTG後に一緒に確認します。
+      出品するときに、仕入れ値・送料・手数料をあらかじめ売る値段に含めて決めます。だから、これらはすべてお客様が払う代金の中からまかなわれ、残ったお金があなたの利益になります。「売れたのに手数料で損をした」ということが起きないよう、出品前に金額を決めておくのがポイントです。
     </div>
     <div id="calc"></div>
     <div class="done" id="m2done">ステップ2 クリア!</div>
@@ -228,7 +228,7 @@ body:not(.locked) #gate{display:none}
   <!-- M3 -->
   <section class="card" id="m3" hidden>
     <h2>ステップ3:出品フォームを埋めてみる</h2>
-    <p class="why">スタートアップMTG後は、仕入れ先の商品ページを見ながらBUYMAの出品フォームを埋めていきます。下の商品情報を見ながら、出品フォームの練習版を入力してみてください。</p>
+    <p class="why">実際の出品では、仕入れ先の商品ページを見ながらBUYMAの出品フォームを埋めていきます。下の商品情報を見ながら、出品フォームの練習版を入力してみてください。</p>
     <svg class="fig" viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="商品情報を出品フォームに写す" font-family="Noto Sans JP, sans-serif">
 <defs><marker id="ah2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f5f5b"/></marker></defs>
 <rect x="4" y="10" width="124" height="130" rx="10" fill="#faf8f4" stroke="#e6e1d8"/>
@@ -359,7 +359,7 @@ body:not(.locked) #gate{display:none}
         <label class="check" style="margin-top:10px"><input type="checkbox" id="mi_frame"> 細い枠をつける</label>
         <button class="btn" id="mi_done" type="button">これで完成!</button>
         <img id="mi_out" alt="完成した商品画像">
-        <div class="small" id="mi_save" style="display:none;margin-top:6px">完成画像を長押し(パソコンは右クリック)すると保存できます。LINEで担当者に送ってみてください。</div>
+        <div class="small" id="mi_save" style="display:none;margin-top:6px">完成画像を長押し(パソコンは右クリック)すると保存できます。</div>
       </div>
     </div>
     </div>
@@ -374,11 +374,11 @@ body:not(.locked) #gate{display:none}
   <!-- M4 -->
   <section class="card" id="m4" hidden>
     <h2>ステップ5:自分のショップを準備する</h2>
-    <p class="why">スタートアップMTG後すぐにアカウントを作れるよう、ショップの顔になる部分を下書きしておきましょう。ここに書いたものはスタートアップMTGで一緒に見直します。</p>
+    <p class="why">すぐにアカウントを作れるよう、ショップの顔になる部分を下書きしておきましょう。書いた内容はこのページに保存され、いつでも見返せます。</p>
 
     <details class="ref" open>
       <summary>BUYMA登録の流れ(予習)</summary>
-      <div class="small" style="margin:6px 0 8px">実際の登録はスタートアップMTG後に、動画を見ながら一緒に進めます。今は流れを知っておくだけで大丈夫です。</div>
+      <div class="small" style="margin:6px 0 8px">まずは流れを知っておくだけで大丈夫です。</div>
       <ol class="clist">
         <li>BUYMAのトップページ右上の「会員登録」を押す</li>
         <li>メールアドレス、パスワード、ニックネームを入れる。<b>ニックネームがそのままショッパー名になり、後から変更できません</b></li>
@@ -468,16 +468,9 @@ body:not(.locked) #gate{display:none}
 
   <div class="badge" id="badge">
     <b>準備完了です!</b>
-    スタートアップMTGでは、今日入力した内容から一緒にスタートします。
+    ここで入力した内容は、実際のショップ作りにそのまま使えます。
   </div>
 
-  <section class="card">
-    <h2>担当者に報告する</h2>
-    <p class="why" style="margin-bottom:0">進み具合と、ステップ5で書いた内容をコピーして、LINEで送ってください。途中まででも大丈夫です。</p>
-    <button class="btn" id="copyBtn" type="button">報告をコピーする</button>
-    <div class="copied" id="copied"></div>
-    <textarea id="fallback" readonly></textarea>
-  </section>
 </div>
 
 <script>
@@ -609,7 +602,7 @@ body:not(.locked) #gate{display:none}
     else { $("f_code").style.borderColor = "var(--ok)"; }
     var fb = $("m3fb");
     if (ok) {
-      fb.innerHTML = '<div class="fb ok">全問正解! 出品フォームの入力は、スタートアップMTG後にこの流れで進めていきます。</div>';
+      fb.innerHTML = '<div class="fb ok">全問正解! 実際の出品も、この流れで入力していきます。</div>';
       state.m3 = true; updateProgress();
     } else {
       fb.innerHTML = '<div class="fb ng">' + msgs.join("<br>") + '</div>';
@@ -638,7 +631,7 @@ body:not(.locked) #gate{display:none}
     var n = state.s_chk.filter(Boolean).length;
     if (n < 3) msgs.push("チェック項目を3つ以上進めておきましょう(今 " + n + " / 5)。");
     if (msgs.length) { $("m4fb").innerHTML = '<div class="fb ng">' + msgs.join("<br>") + '</div>'; return; }
-    $("m4fb").innerHTML = '<div class="fb ok">お疲れさまでした! この下書きをスタートアップMTGで一緒に仕上げます。</div>';
+    $("m4fb").innerHTML = '<div class="fb ok">お疲れさまでした! この下書きを、実際のショップ作りに使ってください。</div>';
     state.m4 = true; updateProgress();
   });
 
@@ -733,21 +726,6 @@ body:not(.locked) #gate{display:none}
     });
     pv();
   })();
-
-  // ---------- report ----------
-  $("copyBtn").addEventListener("click", function(){
-    saveShop();
-    var mark = function(b){ return b ? "クリア" : "未完了"; };
-    var n = ORDER.filter(function(m){ return state[m]; }).length;
-    var text = "【MTG前 準備ステップ 報告】\n準備完了度:" + Math.round(n/ORDER.length*100) + "%\n" +
-      "ステップ1(しくみ):" + mark(state.m1) + "\nステップ2(利益のしくみ):" + mark(state.m2) +
-      "\nステップ3(出品入力):" + mark(state.m3) + "\nステップ4(画像づくり):" + mark(state.mi) + "\nステップ5(ショップ準備):" + mark(state.m4) +
-      "\n\nBUYMAで気になった商品:" + (state.fav || "(未記入)") + "\n\nショッパー名の候補:" + ($("s_name").value || "(未記入)") +
-      "\n自己紹介文の下書き:\n" + ($("s_intro").value || "(未記入)");
-    var done = function(){ $("copied").textContent = "コピーしました。LINEに貼り付けて送ってください。"; };
-    var fail = function(){ var t = $("fallback"); t.style.display = "block"; t.value = text; t.rows = 8; t.focus(); t.select(); $("copied").textContent = "下の文章を長押ししてコピーしてください。"; };
-    try { navigator.clipboard.writeText(text).then(done, fail); } catch(e) { fail(); }
-  });
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-go]"), function(btn){
     btn.addEventListener("click", function(){ show(btn.dataset.go); });
