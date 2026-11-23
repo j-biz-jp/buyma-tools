@@ -222,15 +222,15 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .gr b{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){ .chart .tip{transition:none} }
 /* app shell */
-.wrap{padding-bottom:110px}
+.wrap{padding-bottom:120px}
 .view[hidden]{display:none}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
-.tabbar button{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:700;color:var(--sub);padding:4px 0;position:relative}
-.tabbar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.tabbar button.on{color:var(--wine)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 6px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+.tabbar button{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12.5px;font-weight:700;color:var(--sub);padding:6px 0;margin:0 3px;border-radius:12px;position:relative}
+.tabbar svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--wine);background:var(--winel)}
 .tabbar button.on svg{stroke-width:2.2}
-.tabbar i{position:absolute;top:0;left:calc(50% + 6px);background:var(--wine);color:#fff;font-style:normal;font-size:10px;min-width:16px;height:16px;line-height:16px;border-radius:8px;padding:0 4px}
-.toast{bottom:84px;z-index:30;white-space:nowrap}
+.tabbar i{position:absolute;top:2px;left:calc(50% + 8px);background:var(--wine);color:#fff;font-style:normal;font-size:10px;min-width:16px;height:16px;line-height:16px;border-radius:8px;padding:0 4px}
+.toast{bottom:96px;z-index:30;white-space:nowrap}
 body.sheet-open{overflow:hidden}
 
 /* item sheet */
