@@ -11,6 +11,7 @@ AIは使いません。GitHub Actions から毎朝自動で実行されます。
     python scripts/update_trend.py
 """
 import json
+import os
 import re
 import sys
 import time
@@ -193,6 +194,12 @@ def main():
     old = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else {}
 
     items, items_upd = parse_items(fetch(ITEM_URL))
+
+    # 1時間ごとに起動される。BUYMAのランキングが前回と同じ日付なら、何もせずに終わる
+    force = os.environ.get("FORCE") == "1"
+    if not force and items_upd and items_upd == old.get("itemsUpdated") and old.get("cats") and old.get("fx"):
+        print(f"[待機] BUYMAのランキングはまだ {items_upd} のままです。新しいランキングが出たら取り込みます。")
+        return 0
     time.sleep(3)
     brands, luxury, brands_upd = parse_brands(fetch(BRAND_URL))
 
@@ -215,18 +222,19 @@ def main():
     cats = fetch_cats(old.get("cats", {}))
     pulse = list(old.get("pulse", []))
     got = {}
-    if not any(p.get("date") == today for p in pulse):  # 同じ日の2回目(お昼の回)は読み直さない
+    if not any(p.get("date") == day for p in pulse):  # 同じランキングの日には1回だけ読む
         ids = []
         for row in items + [r for c in cats.values() for sx in ("women", "men") for r in c.get(sx, [])]:
             if row[1] not in ids:
                 ids.append(row[1])
         got = fetch_pulse(ids)
         if got:
-            pulse.append({"date": today, "s": got})
+            pulse.append({"date": day, "s": got})
     pulse = sorted(pulse, key=lambda p: p["date"])[-KEEP_DAYS:]
 
     data = {
         "fetchedAt": today,
+        "capturedAt": datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M"),
         "itemsUpdated": items_upd or old.get("itemsUpdated", ""),
         "brandsUpdated": brands_upd or old.get("brandsUpdated", ""),
         "brands": brands,

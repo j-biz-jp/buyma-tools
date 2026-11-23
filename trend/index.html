@@ -287,7 +287,7 @@ body:not(.locked) #gate{display:none}
 <div id="gate"><form class="box" id="gateForm" autocomplete="off">
   <div class="for">BUYMAパートナー専用</div>
   <h1>BUYMA トレンドレーダー</h1>
-  <p>毎朝更新される、BUYMAの売れ筋ツールです。パスワードを入れてください。</p>
+  <p>BUYMAの更新に合わせて自動で新しくなる、売れ筋ツールです。パスワードを入れてください。</p>
   <label for="gatePw">パスワード</label>
   <input id="gatePw" type="password" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
   <button type="submit">開く</button>
@@ -781,7 +781,7 @@ body:not(.locked) #gate{display:none}
         $("bchart").innerHTML = '<div class="bstat"><span class="num">' + last + '</span><span class="u">件が上位100件に入っています</span>' +
           (n > 1 ? (diff ? '<span class="mv ' + (diff > 0 ? 'up' : 'down') + '">前回より' + (diff > 0 ? '+' : '') + diff + '件</span>' : '<span class="mv st">前回と同じ</span>') : '') + '</div>' +
           '<div class="chart"><svg viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="' + esc(disp[sel]) + 'の上位100件内の件数の推移">' + g + area + line + dots + hits + '</svg><div class="tip" id="btip"></div></div>' +
-          (n < 7 ? '<p class="lead">まだ' + n + '日分のデータです。毎朝1日分ずつ増えて、最大30日分の流れが見られるようになります。</p>' : '');
+          (n < 7 ? '<p class="lead">まだ' + n + '日分のデータです。毎日1日分ずつ増えて、最大30日分の流れが見られるようになります。</p>' : '');
         var svg = $("bchart").querySelector("svg"), tip = $("btip");
         function show(i){
           var r = svg.getBoundingClientRect(), sc = r.width / W;

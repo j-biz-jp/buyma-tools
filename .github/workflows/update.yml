@@ -1,19 +1,24 @@
-name: BUYMAトレンド 毎朝更新
+name: BUYMAトレンド 自動更新
 
 on:
   schedule:
-    # 毎朝 6:42 と お昼 12:42(日本時間)。GitHubの都合で数十分遅れることがあります。
-    # BUYMAのランキング更新が朝より遅い日も、お昼の回で取り込めます。
-    - cron: "42 21 * * *"
-    - cron: "42 3 * * *"
+    # 1時間ごとに、BUYMAのランキングが新しくなったかを確認します(毎時17分ごろ)。
+    # 新しいランキングが出ていたときだけ全部を取り込み、出ていなければすぐに終わります。
+    # GitHubの都合で数十分遅れることがあります。
+    - cron: "17 * * * *"
   workflow_dispatch: {}
 
 permissions:
   contents: write
 
+concurrency:
+  group: trend-update
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,7 +26,10 @@ jobs:
           python-version: "3.12"
       - name: 必要な部品を入れる
         run: pip install requests beautifulsoup4
-      - name: BUYMAのランキングを取り込む
+      - name: BUYMAのランキングを確認して取り込む
+        env:
+          # 手動で実行したときは、ランキングが同じ日付でも取り込み直す
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
         run: python scripts/update_trend.py
       - name: 変更を保存する
         run: |
@@ -32,5 +40,6 @@ jobs:
             echo "変更はありませんでした"
           else
             git commit -m "トレンドデータを更新 $(TZ=Asia/Tokyo date +%Y-%m-%d)"
+            git pull --rebase
             git push
           fi
