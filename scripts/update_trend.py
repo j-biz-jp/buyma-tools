@@ -192,11 +192,17 @@ def fetch_fx():
 
 def main():
     old = json.loads(DATA.read_text(encoding="utf-8")) if DATA.exists() else {}
+    force = os.environ.get("FORCE") == "1"
+
+    # 今日のランキングをすでに取り込めていたら、翌日まではBUYMAにアクセスせずに終わる
+    today_dot = jst_today().replace("-", ".")
+    if not force and old.get("itemsUpdated") == today_dot and old.get("cats") and old.get("fx"):
+        print(f"[完了済み] 今日({today_dot})のランキングは取り込み済みです。明日まで確認はお休みします。")
+        return 0
 
     items, items_upd = parse_items(fetch(ITEM_URL))
 
     # 1時間ごとに起動される。BUYMAのランキングが前回と同じ日付なら、何もせずに終わる
-    force = os.environ.get("FORCE") == "1"
     if not force and items_upd and items_upd == old.get("itemsUpdated") and old.get("cats") and old.get("fx"):
         print(f"[待機] BUYMAのランキングはまだ {items_upd} のままです。新しいランキングが出たら取り込みます。")
         return 0
