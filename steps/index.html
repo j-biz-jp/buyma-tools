@@ -169,7 +169,7 @@ body:not(.locked) #gate{display:none}
 <g>
 <rect x="8" y="6" width="304" height="68" rx="14" fill="#e3efed"/>
 <circle cx="46" cy="40" r="24" fill="#1f5f5b"/><path d="M34 34 h24 l-3 -8 h-18 z M35 34 v14 h22 v-14" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
-<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">① あなたが出品する</text><text x="82" y="56" font-size="12" fill="#6b665e">商品を選び、情報と画像を準備して出品</text>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">① 商品を出品する</text><text x="82" y="56" font-size="12" fill="#6b665e">商品を選び、情報と画像を準備して出品</text>
 </g>
 <line x1="160" y1="78" x2="160" y2="96" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
 <g transform="translate(0,96)">
@@ -443,7 +443,7 @@ body:not(.locked) #gate{display:none}
       <label class="upload" style="margin-top:0;font-size:13px">カバー画像を選ぶ<input type="file" id="s_cover" accept="image/*"></label>
     </div>
 
-    <label>あなたのショップのイメージ</label>
+    <label>ショップのイメージ</label>
     <div class="shop">
       <div class="shop_cover" id="pv_cover"></div>
       <div class="shop_body">
@@ -513,7 +513,7 @@ body:not(.locked) #gate{display:none}
 
   // ---------- M1 quiz ----------
   var quiz = [
-    { q:"BUYMAはどんなサイト？", o:["中古品を売り買いするフリマアプリ","世界中の出品者から海外ブランド品を買える通販サイト","日本のお店だけが出店する通販サイト"], a:1, e:"BUYMAは、世界中の出品者から海外ブランド品を買える通販サイトです。あなたはここで商品を紹介する側になります。" },
+    { q:"BUYMAはどんなサイト？", o:["中古品を売り買いするフリマアプリ","世界中の出品者から海外ブランド品を買える通販サイト","日本のお店だけが出店する通販サイト"], a:1, e:"BUYMAは、世界中の出品者から海外ブランド品を買える通販サイトです。出品者として、ここで商品を紹介していきます。" },
     { q:"BUYMAで最初にやることは？", o:["売れそうな商品を選んで出品する","海外へ仕入れに行く","在庫をまとめて買っておく"], a:0, e:"まずは売れそうな商品を選んで、出品するところから始まります。" },
     { q:"出品する前に、商品を先に買っておく必要はある？", o:["ある。在庫を用意してから出品する","ない。注文が入ってから仕入れる"], a:1, e:"注文が入ってから仕入れるので、先に商品を買う必要はありません。在庫を抱える心配がありません。" },
     { q:"商品が売れたら、次にやることは？", o:["注文内容を確認して、商品を手配する","何もしなくていい","お客様と直接やりとりして、BUYMAの外で取引する"], a:0, e:"注文が入ったら、内容を確認して商品を手配し、お客様に届けます。BUYMAの外での取引は禁止されているので注意しましょう。" },
