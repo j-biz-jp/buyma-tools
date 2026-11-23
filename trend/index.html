@@ -297,7 +297,7 @@ body:not(.locked) #gate{display:none}
 (function(){
   var H = "e3dd5aacad663924c701e19ad6696363fccb93224f3b5e3923a684f1c255a1b6";
   var KEY = "partner_gate";
-  function ok(){ document.body.classList.remove("locked"); }
+  function ok(){ document.body.classList.remove("locked"); setTimeout(function(){ window.dispatchEvent(new Event("scroll")); }, 50); }
   try { if (localStorage.getItem(KEY) === H) { ok(); return; } } catch(e) {}
   setTimeout(function(){ var i = document.getElementById("gatePw"); if (i) i.focus(); }, 50);
   function sha(t){
@@ -829,6 +829,7 @@ body:not(.locked) #gate{display:none}
       window.scrollTo({top:top, behavior:"smooth"});
     });
     function onScroll(){
+      if (document.body.classList.contains("locked")) { mark("today"); return; }
       var cur = "today";
       VIEWS.forEach(function(v){ if ($("v-" + v).getBoundingClientRect().top < window.innerHeight * 0.35) cur = v; });
       if (window.innerHeight + window.pageYOffset >= document.body.scrollHeight - 4) cur = "my";
