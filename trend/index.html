@@ -203,6 +203,8 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .kpis.two b{font-size:22px}
 .kpis em{font-style:normal;font-weight:700;color:var(--sub);margin-left:4px}
 .kpis em.up{color:var(--up)}
+.card .gtag{position:absolute;top:6px;right:6px;background:rgba(255,255,255,.92);color:var(--ink);font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px}
+#csex{margin-top:10px}
 /* brand momentum */
 .bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
@@ -347,6 +349,13 @@ body:not(.locked) #gate{display:none}
       <div id="items"></div>
     </section>
     <section>
+      <h2>ジャンル別ランキング</h2>
+      <p class="lead">服以外のジャンルも、BUYMA公式のジャンル別ランキングから上位20件ずつ見られます。</p>
+      <div class="tabs" id="cf" role="tablist"></div>
+      <div class="mvtabs" id="csex"><button class="chip on" type="button" data-s="women">レディース</button><button class="chip" type="button" data-s="men">メンズ</button></div>
+      <div id="catitems"></div>
+    </section>
+    <section>
       <h2>ハイブランドの人気商品</h2>
       <p class="lead">人気ブランド上位のハイブランドごとの、人気順の上位です。</p>
       <div class="tabs" id="lf" role="tablist"></div>
@@ -455,6 +464,14 @@ body:not(.locked) #gate{display:none}
       return {rank:a[0], id:String(a[1]), brand:a[2] || "", name:a[3], price:a[4], g:genre(txt(a)), img:a[6] || ""};
     });
     var byId = {}; items.forEach(function(i){ byId[i.id] = i; });
+    var ANY = {}; items.forEach(function(i){ ANY[i.id] = i; });
+    var CATD = D.cats || {}, CATKEYS = Object.keys(CATD).filter(function(k){ return (CATD[k].women || []).length || (CATD[k].men || []).length; });
+    var catItems = [];
+    CATKEYS.forEach(function(k){ ["women","men"].forEach(function(sx){ (CATD[k][sx] || []).forEach(function(a, i){
+      if (isBeauty(a)) return;
+      var it = {rank:a[0], id:String(a[1]), brand:a[2] || "", name:a[3], price:a[4], g:genre(txt(a)), img:a[6] || "", catLabel:CATD[k].label + (sx === "women" ? "(レディース)" : "(メンズ)"), catPos:i + 1, cat:k, sex:sx};
+      catItems.push(it); if (!ANY[it.id]) ANY[it.id] = it;
+    }); }); });
     var prevRank = {}; if (prev) prev.items.forEach(function(a){ prevRank[String(a[1])] = a[0]; });
     var PL = D.pulse || [], plNow = PL.length ? PL[PL.length - 1].s : {}, plPrev = PL.length > 1 ? PL[PL.length - 2].s : null, plPrevDate = PL.length > 1 ? PL[PL.length - 2].date : "";
     function pulseOf(id){
@@ -549,9 +566,14 @@ body:not(.locked) #gate{display:none}
     var pcBand = 0;
     function drawPicks(){
       var lo = pcBand === 0 ? 30000 : 100000, hi = pcBand === 0 ? 100000 : 1e12;
-      var picks = items.filter(function(it){ return it.price >= lo && it.price < hi && it.img; }).slice(0, 12);
+      var seen = {}, pool = items.concat(catItems.filter(function(c){ return c.catPos <= 10; }));
+      var inBand = pool.filter(function(it){ if (seen[it.id] || !(it.price >= lo && it.price < hi && it.img)) return false; seen[it.id] = 1; return true; });
+      // 服ばかりにならないよう、ジャンルを順番に混ぜて並べる
+      var byG = {}; inBand.forEach(function(it){ (byG[it.g] = byG[it.g] || []).push(it); });
+      var gs2 = Object.keys(byG), picks = [];
+      for (var k = 0; picks.length < 14 && k < 20; k++) gs2.forEach(function(g){ if (byG[g][k] && picks.length < 14) picks.push(byG[g][k]); });
       $("pcpick").innerHTML = picks.map(function(it){
-        return '<a class="card wide" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" data-pc="' + esc(it.id) + '" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="rk' + (it.rank <= 3 ? ' w' : '') + '">' + it.rank + '</span><div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div>' +
+        return '<a class="card wide" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" data-pc="' + esc(it.id) + '" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="gtag">' + esc(it.g === "その他" ? (it.catLabel || "その他") : it.g) + '</span><div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div>' +
           '<span class="cap" data-capid="' + esc(it.id) + '"></span><span class="go">詳しく計算する</span></a>';
       }).join("") || '<div class="empty">今日はこの価格帯の商品がランキングにありません。</div>';
       if (typeof feeRate === "number") fillCaps();
@@ -672,9 +694,21 @@ body:not(.locked) #gate{display:none}
       wire($("profit"));
     }
     function fillCaps(){
-      Array.prototype.forEach.call(document.querySelectorAll("[data-capid]"), function(el){ var it = byId[el.dataset.capid]; el.textContent = it ? capLine(it) : ""; });
+      Array.prototype.forEach.call(document.querySelectorAll("[data-capid]"), function(el){ var it = ANY[el.dataset.capid]; el.textContent = it ? capLine(it) : ""; });
     }
-    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); drawProfit(); if (typeof feeRate === "number") fillCaps(); }
+    var catSel = CATKEYS[0], sexSel = "women";
+    if (CATKEYS.length) {
+      $("cf").innerHTML = CATKEYS.map(function(k, i){ return '<button class="tab' + (i === 0 ? ' on' : '') + '" role="tab" type="button" data-k="' + k + '">' + esc(CATD[k].label) + '</button>'; }).join("");
+      $("cf").addEventListener("click", function(e){ var b = e.target.closest(".tab"); if (!b) return; catSel = b.dataset.k; Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); }); drawCats(); });
+      $("csex").addEventListener("click", function(e){ var b = e.target.closest(".chip"); if (!b) return; sexSel = b.dataset.s; Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); }); drawCats(); });
+    }
+    function drawCats(){
+      if (!CATKEYS.length) { $("catitems").innerHTML = '<div class="empty"><b>次の自動更新から表示されます</b>バッグ・財布・アクセサリー・靴などのジャンル別ランキングを毎日取り込みます。</div>'; $("csex").hidden = true; return; }
+      var list = catItems.filter(function(it){ return it.cat === catSel && it.sex === sexSel; });
+      $("catitems").innerHTML = list.map(function(it){ return row(it, {rankText:it.catPos, sub:""}); }).join("") || '<div class="empty">データがありません。</div>';
+      wire($("catitems"));
+    }
+    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); drawProfit(); drawCats(); if (typeof feeRate === "number") fillCaps(); }
     drawAll();
 
     $("genres").innerHTML = gs.map(function(g){
@@ -936,6 +970,7 @@ body:not(.locked) #gate{display:none}
     // ---------- 商品カルテ ----------
     var REG = {};
     items.forEach(function(it){ REG[it.id] = {id:it.id, brand:it.brand, name:it.name, price:it.price, img:it.img}; });
+    catItems.forEach(function(c){ if (!REG[c.id]) REG[c.id] = {id:c.id, brand:c.brand, name:c.name, price:c.price, img:c.img, g:c.g, catLabel:c.catLabel, catPos:c.catPos}; });
     (D.luxury || []).forEach(function(x){ x.items.forEach(function(a, i){ var id = String(a[1]); if (!REG[id]) REG[id] = {id:id, brand:x.brand, name:a[2], price:a[3], img:a[4] || "", lux:x.brand, luxPos:a[0]}; }); });
     Object.keys(PROF).forEach(function(id){ var q = PROF[id]; if (!REG[id] && q.name) REG[id] = {id:id, brand:q.brand, name:q.name, price:q.price, img:q.img || ""}; });
     Object.keys(watch).forEach(function(id){ if (!REG[id]) { var w = watch[id]; REG[id] = {id:id, brand:w.brand, name:w.name, price:w.price, img:w.img || ""}; } });
@@ -971,7 +1006,7 @@ body:not(.locked) #gate{display:none}
       var now = byId[id], best = ins.length ? Math.min.apply(null, ins.map(function(p){ return p.r; })) : null;
       var url = "https://www.buyma.com/item/" + encodeURIComponent(id) + "/";
       var on = !!watch[id];
-      var badge = now ? "人気 " + now.rank + "位" : it.lux ? esc(it.lux) + " 人気順 " + it.luxPos + "位" : "";
+      var badge = now ? "人気 " + now.rank + "位" : it.catLabel ? esc(it.catLabel) + " " + it.catPos + "位" : it.lux ? esc(it.lux) + " 人気順 " + it.luxPos + "位" : "";
       var q = encodeURIComponent((it.brand ? it.brand + " " : "") + it.name.replace(/[【】\[\]☆★♪◆◇●○■□]/g, " "));
       var html = '<div class="sh-img"><img src="' + IMGB + it.img + '/428.jpg" alt="' + esc(it.name) + '" onerror="this.style.visibility=\'hidden\'">' + (badge ? '<span class="rkb">' + badge + '</span>' : '') + '</div>' +
         '<div class="sh-in"><div class="br">' + esc(it.brand) + '</div><h3 id="sh_name">' + esc(it.name) + '</h3><div class="pr">' + yen(it.price) + '</div>';
@@ -983,7 +1018,7 @@ body:not(.locked) #gate{display:none}
           '<div class="sh-h">順位の推移</div><div class="sh-chart">' + rankChart(ser) + '</div>' +
           (hist.length < 7 ? '<p class="lead">データは毎日1日分ずつ増えていきます(最大30日分)。</p>' : '');
       } else {
-        html += '<p class="lead" style="margin-top:14px">この商品は、人気アイテム上位100件にはまだ入っていません。</p>';
+        html += '<p class="lead" style="margin-top:14px">この商品は、総合ランキングの上位100件には入っていません。順位の推移は総合ランキングをもとに記録しています。</p>';
       }
       html += checkerHtml(it);
       html += '<div class="acts"><a class="act main" href="' + url + '" target="_blank" rel="noopener">BUYMAで商品を見る</a>' +

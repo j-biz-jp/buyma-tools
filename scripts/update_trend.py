@@ -129,6 +129,28 @@ def parse_brands(html):
     return brands, luxury, updated_date(soup)
 
 
+# ジャンル別ランキング(服以外もカバーするため)。BUYMAのカテゴリ別ランキングを上位20件ずつ取り込む
+CATS = [("bags", "バッグ"), ("wallet-accessories", "財布・小物"), ("accessories", "アクセサリー"),
+        ("shoes", "靴"), ("watches", "腕時計"), ("eyewear", "アイウェア")]
+CAT_TOP = 20
+
+
+def fetch_cats(old_cats):
+    cats = {}
+    for slug, label in CATS:
+        entry = {"label": label}
+        for sex in ("women", "men"):
+            try:
+                time.sleep(3)
+                rows, _ = parse_items(fetch(f"https://www.buyma.com/rank/{sex}/{slug}/"))
+                entry[sex] = rows[:CAT_TOP]
+            except Exception as e:
+                print(f"[注意] {sex}/{slug} のランキングを読めませんでした: {e}")
+                entry[sex] = (old_cats.get(slug) or {}).get(sex, [])
+        cats[slug] = entry
+    return cats
+
+
 PULSE_N = 30         # アクセス数・お気に入り数を読みにいく商品の数(上位から)
 PULSE_WAIT = 2       # 1商品ごとに空ける秒数(BUYMAに負担をかけないため)
 RE_ACCESS = re.compile(r"アクセス[:：]\s*([\d,]+)")
@@ -192,6 +214,7 @@ def main():
     history.append({"date": day, "items": items})
     history = sorted(history, key=lambda h: h["date"])[-KEEP_DAYS:]
 
+    cats = fetch_cats(old.get("cats", {}))
     pulse = [p for p in old.get("pulse", []) if p.get("date") != today]
     got = fetch_pulse(items)
     if got:
@@ -207,6 +230,7 @@ def main():
         "luxury": luxury or old.get("luxury", []),
         "fx": fetch_fx() or old.get("fx"),
         "pulse": pulse,
+        "cats": cats,
     }
     DATA.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     top = items[0]
