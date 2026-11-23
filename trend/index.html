@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BUYMA トレンドレーダー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ffffff;--ink:#000000;--text:#2e2b28;--sub:#7a746c;--rule:#dcd6ce;--stone:#efece7;--wine:#6b1e2a;--winel:#f4e9ea;--up:#2f6b3a;--down:#6b1e2a;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--text);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--wine);outline-offset:2px}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px 80px}
+.num{font-family:"Bodoni Moda",serif;font-variant-numeric:lining-nums;font-weight:700;color:var(--ink);line-height:.9}
+
+/* header */
+header{padding:28px 0 18px;border-bottom:2px solid var(--ink)}
+.for{font-size:12px;color:var(--sub)}
+h1{margin:4px 0 0;font-size:30px;font-weight:900;color:var(--ink);letter-spacing:.04em;line-height:1.2}
+.when{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:10px;font-size:13px}
+.when b{color:var(--ink);font-size:15px}
+.when span{color:var(--sub);text-align:right}
+
+/* feature */
+.feature{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;padding:26px 0 24px;border-bottom:1px solid var(--rule)}
+.feature .num{font-size:104px;color:var(--wine);letter-spacing:-.02em}
+.feature .cap{font-size:12px;color:var(--sub);margin-bottom:6px}
+.feature .br{font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.04em}
+.feature .nm{font-size:17px;font-weight:700;color:var(--ink);line-height:1.45;margin:2px 0 8px}
+.feature .pr{font-size:20px;font-weight:900;color:var(--ink)}
+.feature .why{font-size:12px;color:var(--sub);margin-top:2px}
+
+/* notes */
+.notes{background:var(--stone);margin:24px -20px 0;padding:18px 20px}
+.notes h2{margin:0 0 6px}
+.notes p{margin:6px 0 0;font-size:14px}
+.notes strong{color:var(--ink)}
+
+/* sections */
+section{margin-top:40px}
+h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em}
+.lead{font-size:13px;color:var(--sub);margin:4px 0 0}
+.tabs{display:flex;gap:14px;overflow-x:auto;margin:14px 0 4px;border-bottom:1px solid var(--rule);scrollbar-width:none}
+.tab{background:none;border:none;padding:8px 0;cursor:pointer;color:var(--sub);font-weight:700;font-size:13px;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+.tab small{font-weight:500;margin-left:1px;font-size:11px}
+
+/* rows */
+.row{display:grid;grid-template-columns:52px 1fr auto 36px;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule)}
+.row .num{font-size:34px;text-align:center}
+.row.top .num{color:var(--wine)}
+.rk small{display:block;text-align:center;font-size:10px;color:var(--sub);margin-top:4px;font-family:"Zen Kaku Gothic New",sans-serif;line-height:1.2}
+.row a{min-width:0;display:block}
+.row .br{font-size:11.5px;font-weight:700;color:var(--ink);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nm{font-size:13.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.row .pr{font-weight:900;color:var(--ink);font-size:14.5px;white-space:nowrap;text-align:right}
+.mv{font-size:10.5px;font-weight:700}
+.mv.up{color:var(--up)}.mv.down{color:var(--down)}.mv.new{color:var(--wine)}.mv.st{color:var(--sub)}
+.heart{width:36px;height:36px;border:none;background:none;cursor:pointer;color:var(--sub);display:flex;align-items:center;justify-content:center;border-radius:50%}
+.heart svg{width:20px;height:20px}
+.heart.on{color:var(--wine)}
+.heart.on path{fill:var(--wine)}
+.more{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:1px}
+.empty{padding:18px 0;border-bottom:1px solid var(--rule);font-size:13.5px;color:var(--sub)}
+.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+
+/* genres */
+.bars{margin-top:14px}
+.bar{display:grid;grid-template-columns:96px 1fr 34px;gap:12px;align-items:center;padding:7px 0;font-size:13.5px}
+.bar .t{height:8px;background:var(--stone)}
+.bar .t i{display:block;height:100%;background:var(--ink)}
+.bar:first-child .t i{background:var(--wine)}
+.bar b{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.spark{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;margin-top:14px}
+.sp .h{display:flex;justify-content:space-between;font-size:12.5px}
+.sp .h b{color:var(--ink)}
+.sp svg{display:block;width:100%;height:42px;margin-top:4px}
+.sp .d{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub)}
+
+/* brands */
+.brands{display:grid;grid-template-columns:1fr 1fr;column-gap:24px;margin-top:10px}
+.bd{display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--rule)}
+.bd .num{font-size:20px;text-align:right}
+.bd:nth-child(-n+3) .num{color:var(--wine)}
+.bd .n{font-weight:700;color:var(--ink);font-size:13.5px;line-height:1.3}
+.bd .k{font-size:11px;color:var(--sub)}
+
+footer{margin-top:44px;padding-top:14px;border-top:2px solid var(--ink);font-size:11.5px;color:var(--sub);line-height:1.8}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);background:var(--ink);color:#fff;font-size:13px;padding:9px 16px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:400px){ .feature .num{font-size:80px} h1{font-size:26px} .row{grid-template-columns:44px 1fr auto 32px;gap:10px} .row .num{font-size:28px} .bar{grid-template-columns:84px 1fr 30px} }
+@media (prefers-reduced-motion:reduce){ .toast{transition:none} }
+</style>
+
+<style>
+body.locked > *:not(#gate){display:none !important}
+#gate{position:fixed;inset:0;z-index:50;background:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font-family:"Zen Kaku Gothic New",system-ui,sans-serif}
+body:not(.locked) #gate{display:none}
+#gate .box{width:100%;max-width:340px}
+#gate .for{font-size:12px;color:#7a746c}
+#gate h1{margin:6px 0 4px;font-size:24px;color:#000;line-height:1.3}
+#gate p{font-size:13px;color:#7a746c;margin:0 0 18px}
+#gate label{display:block;font-size:13px;color:#2e2b28;margin-bottom:6px}
+#gate input{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid #cfc8bd;border-radius:6px}
+#gate input:focus{outline:2px solid #6b1e2a;outline-offset:-1px;border-color:transparent}
+#gate button{width:100%;margin-top:12px;font:inherit;font-weight:700;font-size:15px;padding:12px;border:none;border-radius:6px;background:#6b1e2a;color:#fff;cursor:pointer}
+#gate .err{min-height:1.4em;font-size:13px;color:#a3401e;margin-top:8px}
+</style>
+</head>
+<body class="locked">
+<div id="gate"><form class="box" id="gateForm" autocomplete="off">
+  <div class="for">BUYMAパートナー専用</div>
+  <h1>BUYMA トレンドレーダー</h1>
+  <p>毎朝更新される、BUYMAの売れ筋ツールです。担当者からお伝えしたパスワードを入れてください。</p>
+  <label for="gatePw">パスワード</label>
+  <input id="gatePw" type="password" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
+  <button type="submit">開く</button>
+  <div class="err" id="gateErr" role="alert"></div>
+</form></div>
+<script>
+(function(){
+  var H = "e3dd5aacad663924c701e19ad6696363fccb93224f3b5e3923a684f1c255a1b6";
+  var KEY = "partner_gate";
+  function ok(){ document.body.classList.remove("locked"); }
+  try { if (localStorage.getItem(KEY) === H) { ok(); return; } } catch(e) {}
+  setTimeout(function(){ var i = document.getElementById("gatePw"); if (i) i.focus(); }, 50);
+  function sha(t){
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)).then(function(b){
+      return Array.prototype.map.call(new Uint8Array(b), function(x){ return ("0" + x.toString(16)).slice(-2); }).join("");
+    });
+  }
+  document.getElementById("gateForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = document.getElementById("gatePw").value.trim();
+    sha(v).then(function(h){
+      if (h === H) { try { localStorage.setItem(KEY, H); } catch(err) {} ok(); window.scrollTo(0, 0); }
+      else { document.getElementById("gateErr").textContent = "パスワードが違います。担当者からのLINEをご確認ください。"; }
+    });
+  });
+})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="for">BUYMAパートナー専用ツール</div>
+    <h1>BUYMA トレンドレーダー</h1>
+    <div class="when"><b id="date"></b><span id="upd">読み込み中</span></div>
+  </header>
+
+  <div class="feature" id="feature"></div>
+
+  <div class="notes" id="notes"></div>
+
+  <section>
+    <h2>人気ランキング</h2>
+    <p class="lead">BUYMA公式の人気アイテムランキングです。価格帯ごとにも見られます。数字はBUYMA全体での順位で、美容・コスメの商品を除いているため番号が飛ぶことがあります。</p>
+    <div class="tabs" id="bf" role="tablist"></div>
+    <div id="items"></div>
+  </section>
+
+  <section>
+    <h2>気になるリスト<span id="wcount" class="lead" style="margin-left:8px"></span></h2>
+    <p class="lead">ハートを押した商品の順位を、毎日ここで確認できます。</p>
+    <div id="watch"></div>
+  </section>
+
+  <section>
+    <h2>急上昇</h2>
+    <p class="lead">前回の更新から大きく順位を上げた商品と、新しくランクインした商品です。</p>
+    <div id="rise"></div>
+  </section>
+
+  <section>
+    <h2>ハイブランドの人気商品</h2>
+    <p class="lead">人気ブランドランキング上位のハイブランドについて、それぞれ人気順の上位を載せています。</p>
+    <div class="tabs" id="lf" role="tablist"></div>
+    <div id="lux"></div>
+  </section>
+
+  <section>
+    <h2>いま売れているジャンル</h2>
+    <p class="lead">人気アイテム上位100件の内訳です。</p>
+    <div class="bars" id="genres"></div>
+  </section>
+
+  <section>
+    <h2>ジャンルの推移</h2>
+    <p class="lead">上位100件に入った件数の、日ごとの変化です。</p>
+    <div id="trend"></div>
+  </section>
+
+  <section>
+    <h2>人気ブランド</h2>
+    <p class="lead" id="bupd"></p>
+    <div class="brands" id="brands"></div>
+  </section>
+
+  <footer>BUYMA公式の「人気アイテムランキング」「人気ブランドランキング」と、各ブランドの人気順一覧をもとに、毎朝更新しています。美容・コスメの商品は載せていません。気になるリストは、お使いのスマホやパソコンにだけ保存されます。</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var store = {
+    get: function(k, d){ try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e) { return d; } },
+    set: function(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
+  };
+  function toast(t){ var el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(function(){ el.classList.remove("on"); }, 1600); }
+  var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+  var G = [
+    ["バッグ・財布", /バッグ|カバン|財布|ウォレット|WALLET|トート|ポーチ|カードケース|コインケース|クラッチ|ホーボー|ポシェット/i],
+    ["靴・ブーツ", /ブーツ|スリッポン|ムートン|スニーカー|シューズ|サンダル|パンプス|ローファー|スリッパ|ミュール/i],
+    ["アウター", /アウター|ダウン|ジャケット|コート|ブルゾン|ポンチョ|ケープ|フリース|FLEECE|NUPTSE|Down|Jacket|Coat|PUFFER|JUMPER|CALLA|VARENA|OLSAVA/i],
+    ["トップス・服", /トップス|スウェット|トレーナー|カーディガン|パーカー|フーディ|HOODIE|ジップアップ|ニット|セーター|Tシャツ|カットソー|KNIT|T-shirt|LONGSLEEVE|セットアップ|ワンピース|パンツ|デニム|ジーンズ|ボトムス/i],
+    ["アクセ・小物", /アクセサリー|ネックレス|ピアス|イヤリング|リング|指輪|ブレスレット|時計|アイウェア|メガネ|眼鏡|サングラス|マフラー|ストール|スカーフ|帽子|キャップ|ビーニー|イヤーマフ|雑貨/i]
+  ];
+  var BEAUTY = /ビューティー|ホワイトニング|ストリップス|コスメ|スキンケア|香水|フレグランス|リップ|マスカラ|ファンデ|美容液|化粧/;
+  var txt = function(a){ return a[3] + " " + (a[5] || ""); };
+  var isBeauty = function(a){ return BEAUTY.test(txt(a)); };
+  function genre(t){ for (var i = 0; i < G.length; i++) if (G[i][1].test(t)) return G[i][0]; return "その他"; }
+  var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+  var yen = function(n){ return "¥" + Number(n).toLocaleString("ja-JP"); };
+  function ymd(d){ return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  var now = new Date(), t0 = ymd(now), wk = ["日","月","火","水","木","金","土"];
+  $("date").textContent = (now.getMonth() + 1) + "月" + now.getDate() + "日(" + wk[now.getDay()] + ")";
+
+  var watch = store.get("tr_watch", {});
+
+  fetch("data.json", {cache:"no-store"}).then(function(r){ return r.json(); }).then(render).catch(function(){
+    $("upd").textContent = "データを読み込めませんでした。少し時間をおいて開き直してください。";
+  });
+
+  function render(D){
+    var hist = D.history || [];
+    var today = hist[hist.length - 1], prev = hist.length > 1 ? hist[hist.length - 2] : null;
+    var items = today.items.filter(function(a){ return !isBeauty(a); }).map(function(a){
+      return {rank:a[0], id:String(a[1]), brand:a[2] || "", name:a[3], price:a[4], g:genre(txt(a))};
+    });
+    var byId = {}; items.forEach(function(i){ byId[i.id] = i; });
+    var prevRank = {}; if (prev) prev.items.forEach(function(a){ prevRank[String(a[1])] = a[0]; });
+    var fd = String(D.fetchedAt || "").split("-");
+    $("upd").textContent = (fd.length === 3 ? (+fd[1]) + "月" + (+fd[2]) + "日の朝に更新" : "");
+    $("bupd").textContent = "BUYMAの人気ブランドランキング(" + D.brandsUpdated + " 更新)。ブランド名を押すと、人気順の商品一覧が開きます。";
+
+    function mv(it){
+      if (!prev) return "";
+      var p = prevRank[it.id];
+      return p === undefined ? '<span class="mv new">初登場</span>' : p > it.rank ? '<span class="mv up">' + (p - it.rank) + '位上昇</span>' : p < it.rank ? '<span class="mv down">' + (it.rank - p) + '位下降</span>' : '<span class="mv st">変わらず</span>';
+    }
+    function row(it, o){
+      o = o || {};
+      var on = !!watch[it.id];
+      var sub = o.sub != null ? o.sub : mv(it);
+      return '<div class="row' + (it.rank <= 3 ? ' top' : '') + '"><div class="rk"><div class="num">' + (o.rankText || it.rank) + '</div>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
+        '<a href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + '</div><div class="nm">' + esc(it.name) + '</div></a>' +
+        '<div class="pr">' + yen(it.price) + '</div>' +
+        '<button class="heart' + (on ? ' on' : '') + '" type="button" data-id="' + esc(it.id) + '" aria-pressed="' + on + '" aria-label="気になるリストに入れる">' + HEART + '</button></div>';
+    }
+    function wire(el){
+      Array.prototype.forEach.call(el.querySelectorAll(".heart"), function(b){
+        b.addEventListener("click", function(){
+          var id = b.dataset.id, it = byId[id];
+          if (watch[id]) { delete watch[id]; toast("気になるリストから外しました"); }
+          else {
+            if (!it) { var e = b.closest(".row"); it = {name:e.querySelector(".nm").textContent, brand:e.querySelector(".br").textContent, price:+e.querySelector(".pr").textContent.replace(/\D/g, ""), rank:null}; }
+            watch[id] = {name:it.name, brand:it.brand, price:it.price, rank0:it.rank, date0:t0};
+            toast("気になるリストに入れました");
+          }
+          store.set("tr_watch", watch);
+          drawAll();
+        });
+      });
+    }
+
+    // stats
+    var counts = {}; items.forEach(function(it){ counts[it.g] = (counts[it.g] || 0) + 1; });
+    var gs = Object.keys(counts).sort(function(a,b){ return (a === "その他") - (b === "その他") || counts[b] - counts[a]; });
+    var share = Math.round(counts[gs[0]] / items.length * 10);
+    var hi = items.filter(function(i){ return i.price >= 100000; });
+    var bc = {}; items.slice(0, 50).forEach(function(it){ var b = it.brand.toUpperCase(); if (b) bc[b] = (bc[b] || 0) + 1; });
+    var topB = Object.keys(bc).sort(function(a,b){ return bc[b] - bc[a]; }).slice(0, 3);
+
+    // feature
+    var f = items[0];
+    $("feature").innerHTML = '<div class="num" aria-label="総合' + f.rank + '位">' + f.rank + '</div>' +
+      '<a href="https://www.buyma.com/item/' + encodeURIComponent(f.id) + '/" target="_blank" rel="noopener"><div class="cap">今日の人気1位</div>' +
+      '<div class="br">' + esc(f.brand) + '</div><div class="nm">' + esc(f.name) + '</div><div class="pr">' + yen(f.price) + '</div></a>';
+
+    // notes
+    var n1 = "人気アイテムの上位100件のうち、約" + share + "割が<strong>" + esc(gs[0]) + "</strong>です。" + (gs[0] === "アウター" ? "寒くなるこの時期は、ダウンやコートがよく動きます。" : "");
+    var n2 = topB.length ? "上位50件で多く見かけるブランドは、<strong>" + topB.map(esc).join("、") + "</strong>。" : "";
+    $("notes").innerHTML = '<h2>今朝の売れ筋メモ</h2><p>' + n1 + '</p>' + (n2 ? '<p>' + n2 + '</p>' : '');
+
+    // bands
+    var BANDS = [["総合",0,1e12],["3万円未満",0,30000],["3〜10万円",30000,100000],["10万円以上",100000,1e12]];
+    var cur = 0;
+    $("bf").innerHTML = BANDS.map(function(b, i){
+      var n = items.filter(function(it){ return it.price >= b[1] && it.price < b[2]; }).length;
+      return '<button class="tab' + (i === 0 ? ' on' : '') + '" role="tab" aria-selected="' + (i === 0) + '" type="button" data-i="' + i + '">' + b[0] + '' + '</button>';
+    }).join("");
+    $("bf").addEventListener("click", function(e){
+      var b = e.target.closest(".tab"); if (!b) return;
+      cur = +b.dataset.i;
+      Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); x.setAttribute("aria-selected", x === b); });
+      drawBand();
+    });
+    function drawBand(){
+      var b = BANDS[cur];
+      var list = items.filter(function(it){ return it.price >= b[1] && it.price < b[2]; }).slice(0, cur === 0 ? 20 : 10);
+      $("items").innerHTML = list.map(function(it){ return row(it); }).join("") || '<div class="empty">この価格帯の商品はありません。</div>';
+      wire($("items"));
+    }
+
+    function drawWatch(){
+      var ids = Object.keys(watch);
+      $("wcount").textContent = ids.length ? ids.length + "件" : "";
+      if (!ids.length) {
+        $("watch").innerHTML = '<div class="empty"><b>気になる商品を3つ選んでみましょう</b>ランキングのハートを押すと、ここに入ります。スタートアップMTGで「なぜ気になったか」を話すと、商品選びの練習になります。</div>';
+        return;
+      }
+      $("watch").innerHTML = ids.map(function(id){
+        var w = watch[id], it = byId[id];
+        if (it) {
+          var d = (w.rank0 || it.rank) - it.rank;
+          var sub = d > 0 ? '<span class="mv up">入れた日から' + d + '位上昇</span>' : d < 0 ? '<span class="mv down">入れた日から' + (-d) + '位下降</span>' : '<span class="mv st">入れた日と同じ</span>';
+          return row(it, {sub:sub});
+        }
+        return row({id:id, name:w.name, brand:w.brand, price:w.price, rank:999}, {rankText:"—", sub:'<span class="mv st">100位の外</span>'});
+      }).join("");
+      wire($("watch"));
+    }
+
+    function drawRise(){
+      if (!prev) {
+        $("rise").innerHTML = '<div class="empty"><b>明日の朝から表示されます</b>毎日のランキングを比べて、急に順位を上げた商品をここに出します。</div>';
+        return;
+      }
+      var r = items.map(function(it){ var p = prevRank[it.id]; return {it:it, gain:p === undefined ? 101 - it.rank : p - it.rank}; })
+        .filter(function(x){ return x.gain > 0; }).sort(function(a,b){ return b.gain - a.gain; }).slice(0, 5);
+      $("rise").innerHTML = r.map(function(x){ return row(x.it); }).join("") || '<div class="empty">今日は大きな動きはありませんでした。</div>';
+      wire($("rise"));
+    }
+
+    var LX = (D.luxury || []).filter(function(x){ return x.items && x.items.length; }), lc = 0;
+    if (LX.length) {
+      $("lf").innerHTML = LX.map(function(x, i){ return '<button class="tab' + (i === 0 ? ' on' : '') + '" role="tab" aria-selected="' + (i === 0) + '" type="button" data-i="' + i + '">' + esc(x.brand) + '</button>'; }).join("");
+      $("lf").addEventListener("click", function(e){
+        var b = e.target.closest(".tab"); if (!b) return;
+        lc = +b.dataset.i;
+        Array.prototype.forEach.call(this.children, function(y){ y.classList.toggle("on", y === b); y.setAttribute("aria-selected", y === b); });
+        drawLux();
+      });
+    }
+    function drawLux(){
+      if (!LX.length) { $("lux").innerHTML = '<div class="empty">準備中です。</div>'; return; }
+      var x = LX[lc];
+      $("lux").innerHTML = x.items.filter(function(a){ return !BEAUTY.test(a[2]); }).map(function(a){
+        return row({id:String(a[1]), brand:x.brand + "  " + (x.kana || ""), name:a[2], price:a[3], rank:a[0]}, {sub:"人気順"});
+      }).join("") + '<a class="more" href="https://www.buyma.com/r/' + encodeURIComponent(x.brand) + '/" target="_blank" rel="noopener">' + esc(x.brand) + 'の人気商品をBUYMAで見る</a>';
+      wire($("lux"));
+    }
+
+    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); }
+    drawAll();
+
+    var max = counts[gs[0]];
+    $("genres").innerHTML = gs.map(function(g){
+      return '<div class="bar"><span>' + g + '</span><span class="t"><i style="width:' + (counts[g] / max * 100) + '%"></i></span><b>' + counts[g] + '</b></div>';
+    }).join("");
+
+    if (hist.length < 2) {
+      $("trend").innerHTML = '<div class="empty"><b>明日の朝から表示されます</b>毎日のデータがたまるほど、季節の流れが見えてきます。</div>';
+    } else {
+      var H = hist.slice(-30), series = {}, names0 = G.map(function(x){ return x[0]; });
+      H.forEach(function(h){
+        var c = {}; h.items.forEach(function(a){ if (isBeauty(a)) return; var g = genre(txt(a)); c[g] = (c[g] || 0) + 1; });
+        names0.forEach(function(g){ (series[g] = series[g] || []).push(c[g] || 0); });
+      });
+      var names = names0.filter(function(g){ return series[g].some(function(v){ return v > 0; }); })
+        .sort(function(a,b){ return series[b][series[b].length - 1] - series[a][series[a].length - 1]; });
+      var smax = Math.max.apply(null, names.map(function(g){ return Math.max.apply(null, series[g]); })) || 1;
+      $("trend").innerHTML = '<div class="spark">' + names.map(function(g, gi){
+        var v = series[g], n = v.length, W = 200, Hh = 42;
+        var pts = v.map(function(y, i){ return (n === 1 ? W / 2 : i / (n - 1) * (W - 6) + 3).toFixed(1) + "," + (Hh - 3 - y / smax * (Hh - 8)).toFixed(1); });
+        var last = v[n - 1], diff = last - v[Math.max(0, n - 2)], lp = pts[n - 1].split(",");
+        var col = gi === 0 ? "#6b1e2a" : "#000";
+        return '<div class="sp"><div class="h"><span>' + g + '</span><b>' + last + '件' + (diff ? '<span class="mv ' + (diff > 0 ? 'up' : 'down') + '"> ' + (diff > 0 ? '+' : '') + diff + '</span>' : '') + '</b></div>' +
+          '<svg viewBox="0 0 200 42" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="41" x2="200" y2="41" stroke="#dcd6ce"/><polyline points="' + pts.join(" ") + '" fill="none" stroke="' + col + '" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><circle cx="' + lp[0] + '" cy="' + lp[1] + '" r="2.6" fill="' + col + '"/></svg>' +
+          '<div class="d"><span>' + (+H[0].date.slice(5, 7)) + '/' + (+H[0].date.slice(8)) + '</span><span>' + (+H[H.length - 1].date.slice(5, 7)) + '/' + (+H[H.length - 1].date.slice(8)) + '</span></div></div>';
+      }).join("") + '</div>';
+    }
+
+    $("brands").innerHTML = (D.brands || []).map(function(b, i){
+      return '<a class="bd" href="https://www.buyma.com/r/' + encodeURIComponent(b[0]) + '/" target="_blank" rel="noopener"><span class="num">' + (i + 1) + '</span><span><div class="n">' + esc(b[0]) + '</div><div class="k">' + esc(b[1] || "") + '</div></span></a>';
+    }).join("");
+  }
+})();
+</script>
+</body>
+</html>

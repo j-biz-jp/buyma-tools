@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>スタートアップMTG前 ショップ準備ステップ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4f0;--card:#fff;--ink:#1f1d1a;--sub:#6b665e;--line:#e6e1d8;--acc:#1f5f5b;--accs:#e3efed;--ok:#2f7a3c;--oks:#e6f2e7;--ng:#a3401e;--ngs:#f8e9e2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:600px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--sub);font-size:14px;margin:0}
+.progress{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .4s}
+.ptext{display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}
+.ptext b{color:var(--acc);font-size:15px}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+.tab{font:inherit;font-size:12px;padding:8px 4px;border:1px solid var(--line);background:var(--card);border-radius:10px;cursor:pointer;color:var(--ink);line-height:1.3}
+.tab.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.tab.lock{background:#efece6;color:#a39d93;cursor:not-allowed}
+.next{display:none;margin-top:12px;background:var(--accs);border-radius:12px;padding:14px;font-size:14px;text-align:center}
+.next .btn{margin-top:10px}
+.tab .d{display:block;font-size:11px;opacity:.75}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px;margin-top:14px}
+.card h2{font-size:17px;margin:0 0 4px}
+.card .why{font-size:13px;color:var(--sub);margin:0 0 14px}
+.q{border-top:1px dashed var(--line);padding:14px 0 4px}
+.q:first-of-type{border-top:none;padding-top:0}
+.qt{font-weight:500;margin-bottom:8px}
+.opts{display:grid;gap:6px}
+.opt{font:inherit;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--acc)}
+.opt.ok{background:var(--oks);border-color:var(--ok)}
+.opt.ng{background:var(--ngs);border-color:var(--ng)}
+.fb{font-size:13px;margin-top:8px;padding:10px 12px;border-radius:10px;display:none}
+.fb.ok{display:block;background:var(--oks);color:var(--ok)}
+.fb.ng{display:block;background:var(--ngs);color:var(--ng)}
+label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+textarea{font-size:15px;min-height:110px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+.unit{position:relative}.unit input{padding-right:40px}.unit span{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:13px}
+.btn{font:inherit;font-weight:700;font-size:15px;width:100%;margin-top:14px;padding:12px;border:none;border-radius:12px;background:var(--acc);color:#fff;cursor:pointer}
+.btn.sub{background:#fff;color:var(--acc);border:1px solid var(--acc)}
+.item{background:#faf8f4;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px}
+.item .src{font-size:11px;color:var(--sub);letter-spacing:.05em}
+.item .nm{font-weight:700;font-size:16px;margin:2px 0 8px}
+.item dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}
+.item dt{color:var(--sub)}.item dd{margin:0}
+.point{background:var(--oks);color:#1f4d27;border-radius:12px;padding:14px;font-size:14px;margin-top:10px}
+.point b{display:block;font-size:15px;margin-bottom:4px;color:var(--ok)}
+.editor{margin-top:12px}
+.canvaswrap{background:repeating-conic-gradient(#eee 0% 25%,#fff 0% 50%) 50%/20px 20px;border:1px solid var(--line);border-radius:12px;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:14px;text-align:center}
+.canvaswrap canvas{width:100%;height:100%;display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=range]{padding:0;border:none;height:28px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
+.sw.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--accs)}
+.upload{display:block;text-align:center;padding:14px;border:2px dashed var(--acc);border-radius:12px;color:var(--acc);font-weight:700;cursor:pointer;margin-top:10px}
+.upload input{display:none}
+#mi_out{width:100%;border-radius:12px;border:1px solid var(--line);display:none;margin-top:10px}
+.clist{padding-left:20px;margin:8px 0;font-size:14px}
+.clist li{margin:6px 0}
+.clist .check{margin:0}
+details.ref{background:#faf8f4;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+details.ref summary{font-weight:700;cursor:pointer;color:var(--acc)}
+.shop{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.shop_cover{height:120px;background:linear-gradient(135deg,#d9d3c7,#efe9df) center/cover}
+.shop_body{padding:0 14px 14px;position:relative}
+.shop_icon{width:72px;height:72px;border-radius:50%;border:3px solid #fff;background:#e9e4da center/cover;margin-top:-36px}
+.shop_name{font-weight:700;font-size:18px;margin-top:6px}
+.shop_sub{font-size:12px;color:var(--sub)}
+.shop_intro{font-size:13px;margin-top:8px;white-space:pre-wrap;color:var(--ink)}
+.links{margin-top:12px;display:grid;gap:8px}
+.lk{display:block;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.lk b{display:block;color:var(--acc);font-size:14px}
+.lk span{font-size:12px;color:var(--sub)}
+.lk:hover{border-color:var(--acc)}
+.fig{display:block;width:100%;height:auto;margin:10px 0 4px}
+.fig-sm{max-width:260px;margin:10px auto 4px}
+.profit{margin-top:10px;background:var(--oks);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline}
+.profit span{font-weight:700;color:var(--ok)}
+.profit b{font-size:26px;color:var(--ok)}
+.steps{font-size:13px;background:var(--accs);border-radius:10px;padding:10px 12px;margin-top:8px;display:none}
+.done{display:none;text-align:center;padding:10px;margin-top:12px;border-radius:10px;background:var(--oks);color:var(--ok);font-weight:700}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:6px 0;color:var(--ink)}
+.check input{width:auto;margin-top:5px}
+.badge{text-align:center;padding:18px;border-radius:14px;background:var(--accs);margin-top:14px;display:none}
+.badge b{display:block;font-size:20px;color:var(--acc)}
+.small{font-size:12px;color:var(--sub)}
+.copied{font-size:13px;color:var(--acc);text-align:center;margin-top:8px;min-height:1em}
+#fallback{display:none;margin-top:8px;font-size:13px}
+</style>
+
+<style>
+body.locked > *:not(#gate){display:none !important}
+#gate{position:fixed;inset:0;z-index:50;background:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font-family:"Noto Sans JP",system-ui,sans-serif}
+body:not(.locked) #gate{display:none}
+#gate .box{width:100%;max-width:340px}
+#gate .for{font-size:12px;color:#7a746c}
+#gate h1{margin:6px 0 4px;font-size:24px;color:#000;line-height:1.3}
+#gate p{font-size:13px;color:#7a746c;margin:0 0 18px}
+#gate label{display:block;font-size:13px;color:#2e2b28;margin-bottom:6px}
+#gate input{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid #cfc8bd;border-radius:6px}
+#gate input:focus{outline:2px solid #1f5f5b;outline-offset:-1px;border-color:transparent}
+#gate button{width:100%;margin-top:12px;font:inherit;font-weight:700;font-size:15px;padding:12px;border:none;border-radius:6px;background:#1f5f5b;color:#fff;cursor:pointer}
+#gate .err{min-height:1.4em;font-size:13px;color:#a3401e;margin-top:8px}
+</style>
+</head>
+<body class="locked">
+<div id="gate"><form class="box" id="gateForm" autocomplete="off">
+  <div class="for">BUYMAパートナー専用</div>
+  <h1>ショップ準備ステップ</h1>
+  <p>スタートアップMTGまでに進める、5つの準備ステップです。担当者からお伝えしたパスワードを入れてください。</p>
+  <label for="gatePw">パスワード</label>
+  <input id="gatePw" type="password" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false">
+  <button type="submit">開く</button>
+  <div class="err" id="gateErr" role="alert"></div>
+</form></div>
+<script>
+(function(){
+  var H = "e3dd5aacad663924c701e19ad6696363fccb93224f3b5e3923a684f1c255a1b6";
+  var KEY = "partner_gate";
+  function ok(){ document.body.classList.remove("locked"); }
+  try { if (localStorage.getItem(KEY) === H) { ok(); return; } } catch(e) {}
+  setTimeout(function(){ var i = document.getElementById("gatePw"); if (i) i.focus(); }, 50);
+  function sha(t){
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)).then(function(b){
+      return Array.prototype.map.call(new Uint8Array(b), function(x){ return ("0" + x.toString(16)).slice(-2); }).join("");
+    });
+  }
+  document.getElementById("gateForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = document.getElementById("gatePw").value.trim();
+    sha(v).then(function(h){
+      if (h === H) { try { localStorage.setItem(KEY, H); } catch(err) {} ok(); window.scrollTo(0, 0); }
+      else { document.getElementById("gateErr").textContent = "パスワードが違います。担当者からのLINEをご確認ください。"; }
+    });
+  });
+})();
+</script>
+<div class="wrap">
+  <h1>スタートアップMTG前 ショップ準備ステップ</h1>
+  <p class="lead">スタートアップMTG後に実際にやる作業を、先に少しだけ体験しておきましょう。ステップは全部で5つ。1つ10分くらいで終わります。1つクリアすると、次のステップが開きます。今日やるのは、目の前の1つだけで大丈夫です。</p>
+
+  <div class="progress">
+    <div class="ptext"><span>準備完了度</span><b id="pct">0%</b></div>
+    <div class="bar"><i id="barfill"></i></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-t="m1" type="button">ステップ1<span class="d">しくみ</span></button>
+    <button class="tab" data-t="m2" type="button">ステップ2<span class="d">利益のしくみ</span></button>
+    <button class="tab" data-t="m3" type="button">ステップ3<span class="d">出品入力</span></button>
+    <button class="tab" data-t="mi" type="button">ステップ4<span class="d">画像づくり</span></button>
+    <button class="tab" data-t="m4" type="button">ステップ5<span class="d">ショップ準備</span></button>
+  </div>
+
+  <!-- M1 -->
+  <section class="card" id="m1">
+    <h2>ステップ1:BUYMAのしくみを知る</h2>
+    <p class="why">まずは「どうやってお金になるのか」をざっくりつかみましょう。難しい言葉は出てきません。</p>
+    <svg class="fig fig-sm" viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BUYMAで売れるまでの流れ" font-family="Noto Sans JP, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f5f5b"/></marker></defs>
+<g>
+<rect x="8" y="6" width="304" height="68" rx="14" fill="#e3efed"/>
+<circle cx="46" cy="40" r="24" fill="#1f5f5b"/><path d="M34 34 h24 l-3 -8 h-18 z M35 34 v14 h22 v-14" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">① あなたが出品する</text><text x="82" y="56" font-size="12" fill="#6b665e">BUYMAの自分のお店に商品を並べる</text>
+</g>
+<line x1="160" y1="78" x2="160" y2="96" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
+<g transform="translate(0,96)">
+<rect x="8" y="6" width="304" height="68" rx="14" fill="#faf8f4" stroke="#e6e1d8"/>
+<circle cx="46" cy="40" r="24" fill="#c98a3a"/><path d="M33 31 h4 l4 14 h14 l3 -10 h-19" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="43" cy="50" r="2.4" fill="#fff"/><circle cx="54" cy="50" r="2.4" fill="#fff"/>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">② お客様が注文する</text><text x="82" y="56" font-size="12" fill="#6b665e">1,200万人の会員の中から</text>
+</g>
+<line x1="160" y1="174" x2="160" y2="192" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
+<g transform="translate(0,192)">
+<rect x="8" y="6" width="304" height="68" rx="14" fill="#faf8f4" stroke="#e6e1d8"/>
+<circle cx="46" cy="40" r="24" fill="#6b665e"/><path d="M34 34 l12 -6 l12 6 v14 l-12 6 l-12 -6 z M34 34 l12 6 l12 -6 M46 40 v14" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">③ 事務局が買い付け・発送</text><text x="82" y="56" font-size="12" fill="#6b665e">あなたは連絡するだけ</text>
+</g>
+<line x1="160" y1="270" x2="160" y2="288" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah)"/>
+<g transform="translate(0,288)">
+<rect x="8" y="6" width="304" height="68" rx="14" fill="#e6f2e7"/>
+<circle cx="46" cy="40" r="24" fill="#2f7a3c"/><text x="46" y="48" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">¥</text>
+<text x="82" y="34" font-size="15" font-weight="700" fill="#1f1d1a">④ 利益があなたに</text><text x="82" y="56" font-size="12" fill="#6b665e">お客様に届いたら売上が入る</text>
+</g>
+</svg>
+    <div id="quiz"></div>
+    <div class="q">
+      <div class="qt">最後に、BUYMAをお客さんの目線でのぞいてみましょう。</div>
+      <div class="small">BUYMA(<a href="https://www.buyma.com/" target="_blank" rel="noopener">https://www.buyma.com/</a>)を開いて、好きなブランドを1つ検索してみてください。気になった商品の名前を書いてみましょう。</div>
+      <input id="m1fav" placeholder="例:○○のトートバッグ" style="margin-top:8px">
+      <button class="btn sub" id="m1favbtn" type="button">これでOK</button>
+      <div class="fb" id="m1favfb"></div>
+    </div>
+    <div class="done" id="m1done">ステップ1 クリア!</div>
+    <div class="next" id="m1next">おつかれさまでした!今日はここまででOKです。<br>余裕があれば、次のステップに進めます。<button class="btn sub" type="button" data-go="m2">ステップ2を開く</button></div>
+  </section>
+
+  <!-- M2 -->
+  <section class="card" id="m2" hidden>
+    <h2>ステップ2:1つ売れたら、いくら残る？</h2>
+    <p class="why">計算はしなくて大丈夫です。「お客様が払う代金の中から何が支払われて、いくら残るのか」の見方だけ知っておきましょう。</p>
+    <div class="item">
+      <div class="src">例:BUYMAでバッグが1つ売れたとき(わかりやすい数字にしています)</div>
+      <dl style="margin-top:8px">
+        <dt>お客様が払う代金</dt><dd>100,000円</dd>
+        <dt>仕入れ値</dt><dd>−75,000円</dd>
+        <dt>送料など</dt><dd>−5,000円</dd>
+        <dt>BUYMAの手数料</dt><dd>−7,700円</dd>
+      </dl>
+      <div class="profit"><span>あなたの利益</span><b>12,300円</b></div>
+    </div>
+    <div class="point">
+      <b>送料や手数料は、あなたが別に負担するお金ではありません</b>
+      出品するときに、仕入れ値・送料・手数料をあらかじめ売る値段に含めて決めます。だから、これらはすべてお客様が払う代金の中からまかなわれ、残ったお金があなたの利益になります。「売れたのに手数料で損をした」ということが起きないよう、出品前に金額を決めておくのがポイントです。値段の決め方はスタートアップMTG後に一緒に確認します。
+    </div>
+    <div id="calc"></div>
+    <div class="done" id="m2done">ステップ2 クリア!</div>
+    <div class="next" id="m2next">お金の流れがつかめたら、もう半分まで来ています。今日はここまででOKです。<button class="btn sub" type="button" data-go="m3">ステップ3を開く</button></div>
+  </section>
+
+  <!-- M3 -->
+  <section class="card" id="m3" hidden>
+    <h2>ステップ3:出品フォームを埋めてみる</h2>
+    <p class="why">スタートアップMTG後は、仕入れ先の商品ページを見ながらBUYMAの出品フォームを埋めていきます。下の商品情報を見ながら、出品フォームの練習版を入力してみてください。</p>
+    <svg class="fig" viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="商品情報を出品フォームに写す" font-family="Noto Sans JP, sans-serif">
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f5f5b"/></marker></defs>
+<rect x="4" y="10" width="124" height="130" rx="10" fill="#faf8f4" stroke="#e6e1d8"/>
+<text x="66" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#1f1d1a">商品情報</text>
+<g font-size="11" fill="#6b665e"><text x="16" y="58">色:黒</text><text x="16" y="82">発売:2025秋冬</text><text x="16" y="106">発送:イタリア</text><text x="16" y="128">品番:1BG505…</text></g>
+<rect x="192" y="10" width="124" height="130" rx="10" fill="#fff" stroke="#1f5f5b"/>
+<text x="254" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#1f5f5b">出品フォーム</text>
+<g font-size="11" fill="#1f1d1a"><rect x="204" y="44" width="100" height="20" rx="4" fill="#e3efed"/><text x="210" y="58">色 ▸ ブラック</text>
+<rect x="204" y="68" width="100" height="20" rx="4" fill="#e3efed"/><text x="210" y="82">シーズン ▸ 秋冬</text>
+<rect x="204" y="92" width="100" height="20" rx="4" fill="#e3efed"/><text x="210" y="106">買付地 ▸ イタリア</text>
+<rect x="204" y="116" width="100" height="20" rx="4" fill="#e3efed"/><text x="210" y="130">品番 ▸ コピペ</text></g>
+<line x1="134" y1="75" x2="186" y2="75" stroke="#1f5f5b" stroke-width="2.5" marker-end="url(#ah2)"/>
+<text x="160" y="96" text-anchor="middle" font-size="11" fill="#1f5f5b">写すだけ</text>
+</svg>
+    <div class="item">
+      <div class="src">イタリアのお店の商品情報(練習用)</div>
+      <div class="nm">PRADA Re-Nylon &amp; Leather Tote Bag</div>
+      <dl>
+        <dt>価格</dt><dd>2,700ユーロ</dd>
+        <dt>色</dt><dd>黒</dd>
+        <dt>素材</dt><dd>ナイロン、レザー</dd>
+        <dt>発売時期</dt><dd>2025年の秋冬</dd>
+        <dt>品番</dt><dd>1BG505_R064_F0002</dd>
+        <dt>発送</dt><dd>イタリアからDHLで発送</dd>
+      </dl>
+    </div>
+
+    <label for="f_title">商品名(タイトル)</label>
+    <input id="f_title" placeholder="例:【ブランド名】商品名 色">
+    <div class="small">ブランド名・アイテム名・色が入っていると、検索で見つけてもらいやすくなります。</div>
+
+    <label for="f_cat">カテゴリ</label>
+    <select id="f_cat"><option value="">選んでください</option><option value="a">レディースファッション > 財布・小物 > 財布</option><option value="b">レディースファッション > バッグ・カバン > トートバッグ</option><option value="c">メンズファッション > アクセサリー > ベルト</option></select>
+
+    <label for="f_color">色</label>
+    <select id="f_color"><option value="">選んでください</option><option value="red">レッド</option><option value="black">ブラック</option><option value="navy">ネイビー</option><option value="white">ホワイト</option></select>
+
+    <label for="f_season">シーズン</label>
+    <select id="f_season"><option value="">選んでください</option><option value="ss26">2026 春夏</option><option value="fw25">2025-26 秋冬</option><option value="ss25">2025 春夏</option></select>
+
+    <label for="f_code">品番・型番</label>
+    <input id="f_code" placeholder="商品ページからコピーして貼り付け">
+
+    <label for="f_buy">買付地 / 発送地</label>
+    <select id="f_buy"><option value="">選んでください</option><option value="jp">日本 / 日本</option><option value="it">イタリア / イタリア</option><option value="fr">フランス / イタリア</option></select>
+
+    <label for="f_ship">配送方法</label>
+    <select id="f_ship"><option value="">選んでください</option><option value="dhl">DHL</option><option value="yamato">ヤマト運輸(国内)</option><option value="none">設定しない</option></select>
+
+    <label for="f_limit">購入期限</label>
+    <select id="f_limit"><option value="">選んでください</option><option value="1d">1日</option><option value="2w">2週間</option><option value="6m">半年</option></select>
+    <div class="small">商品情報には書いてありません。購入期限は「この値段で買える期間」のことで、自分で決めます。目安は1週間〜1ヶ月くらいです。</div>
+
+    <button class="btn" id="m3check" type="button">答え合わせする</button>
+    <div id="m3fb"></div>
+    <div class="done" id="m3done">ステップ3 クリア!</div>
+    <div class="next" id="m3next">出品フォームまで体験できました。次はお待ちかねの画像づくりです。<button class="btn sub" type="button" data-go="mi">ステップ4を開く</button></div>
+  </section>
+
+  <!-- MI -->
+  <section class="card" id="mi" hidden>
+    <h2>ステップ4:出品用の商品画像を作ってみる</h2>
+    <p class="why">BUYMAでは、1枚目の画像でクリックされるかがほぼ決まります。お手持ちのバッグや財布、小物をスマホで撮って、出品用の画像に仕上げてみましょう。</p>
+    <div class="point" style="margin-top:0">
+      <b>売れる1枚目の3つのコツ</b>
+      ① 正方形で、商品が真ん中に大きく<br>② 背景はすっきり、明るく<br>③ 商品のよさ(色・形)がひと目で分かる
+    </div>
+    <div class="links">
+      <div class="small" style="margin-bottom:6px">作る前に、人気商品の1枚目を見てみましょう(BUYMAが開きます)</div>
+      <a class="lk" href="https://www.buyma.com/rank/" target="_blank" rel="noopener"><b>人気アイテムランキング</b><span>いま売れている商品の画像を見比べる</span></a>
+      <a class="lk" href="https://www.buyma.com/r/PRADA/" target="_blank" rel="noopener"><b>ブランドの人気順(例:PRADA)</b><span>同じブランドで、上位の商品はどんな1枚目か</span></a>
+    </div>
+    <svg class="fig" viewBox="0 0 320 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="商品画像の良い例と惜しい例" font-family="Noto Sans JP, sans-serif">
+<g><rect x="4" y="4" width="148" height="148" rx="6" fill="#ffffff" stroke="#e6e1d8"/>
+<rect x="14" y="14" width="128" height="128" fill="none" stroke="#1f1d1a" stroke-width="1.5"/>
+<path d="M34.5 53.349999999999994 h87.0 l-8.7 66.7 h-69.6 z" fill="#5a3b2a"/><path d="M54.8 53.349999999999994 q0 -34.8 23.2 -34.8 q23.2 0 23.2 34.8" fill="none" stroke="#5a3b2a" stroke-width="5.8"/><rect x="67.85" y="72.2" width="20.3" height="11.6" rx="2.9" fill="#d8b27a"/>
+<rect x="40" y="118" width="76" height="18" fill="rgba(31,29,26,.85)"/><text x="78" y="131" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" letter-spacing="1">BRAND</text>
+<text x="78" y="174" text-anchor="middle" font-size="14" font-weight="700" fill="#2f7a3c">◯ 良い例</text>
+<text x="78" y="194" text-anchor="middle" font-size="11" fill="#6b665e">真ん中に大きく</text><text x="78" y="210" text-anchor="middle" font-size="11" fill="#6b665e">背景すっきり・明るい</text></g>
+<g transform="translate(168,0)"><rect x="4" y="4" width="148" height="148" rx="6" fill="#7d776d"/>
+<rect x="4" y="100" width="148" height="52" fill="#5e584f"/><circle cx="128" cy="40" r="16" fill="#9a9387"/><rect x="100" y="56" width="10" height="44" fill="#4a453e"/><rect x="20" y="24" width="40" height="30" fill="#8f897e"/>
+<path d="M18.0 101.8 h36.0 l-3.5999999999999996 27.599999999999998 h-28.8 z" fill="#3f2c22"/><path d="M26.4 101.8 q0 -14.399999999999999 9.6 -14.399999999999999 q9.6 0 9.6 14.399999999999999" fill="none" stroke="#3f2c22" stroke-width="2.4"/><rect x="31.8" y="109.6" width="8.4" height="4.8" rx="1.2" fill="#d8b27a"/>
+<text x="78" y="174" text-anchor="middle" font-size="14" font-weight="700" fill="#a3401e">△ 惜しい例</text>
+<text x="78" y="194" text-anchor="middle" font-size="11" fill="#6b665e">商品が小さく端っこ</text><text x="78" y="210" text-anchor="middle" font-size="11" fill="#6b665e">背景がごちゃごちゃ・暗い</text></g>
+</svg>
+    <div class="tabs" id="mi_mode" style="grid-template-columns:1fr 1fr;margin-top:12px">
+      <button class="tab on" data-m="canva" type="button">Canvaで作る<span class="d">本番でも使うアプリ</span></button>
+      <button class="tab" data-m="easy" type="button">この画面で作る<span class="d">アプリなしでOK</span></button>
+    </div>
+
+    <div id="mode_canva">
+      <ol class="clist">
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 無料アプリ「Canva」を入れて登録する(スマホでもパソコンでもOK)</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 「デザインを作成」から「Instagram投稿(正方形)」を選ぶ(検索で「正方形」と入れても出てきます)</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 「アップロード」から自分で撮った商品写真を入れて、正方形いっぱいに広げる</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 背景を消してすっきりさせる(Canvaの「背景除去」は有料プランの機能です。無料なら「Photoroom」や「remove.bg」で背景を消してから読み込みます)</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 「素材」で「四角」と検索して図形を置き、塗りの色を「なし」にして、「枠線」で線の太さを調整する</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 「テキスト」からブランド名を入れる</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> (やってみたい人だけ)素材でおしゃれな背景を探して、一番後ろに敷くと高級感が出ます</label></li>
+        <li><label class="check"><input type="checkbox" class="cv_chk"> 右上の「共有」→「ダウンロード」で画像を保存する</label></li>
+      </ol>
+      <div class="small">1枚目の画像は、見てもらえるかどうかを決める一番大事な画像です。2枚目以降はそのままでも大丈夫なので、1枚目に力を入れましょう。</div>
+      <label class="upload">Canvaで作った画像を選ぶ<input type="file" id="cv_file" accept="image/*"></label>
+      <img id="cv_out" alt="Canvaで作った画像" style="width:100%;border-radius:12px;border:1px solid var(--line);display:none;margin-top:10px">
+      <button class="btn" id="cv_done" type="button" style="display:none">これで完成!</button>
+    </div>
+
+    <div id="mode_easy" hidden>
+    <label class="upload">写真を選ぶ(または撮る)<input type="file" id="mi_file" accept="image/*"></label>
+    <div class="editor">
+      <div class="canvaswrap" id="mi_wrap">写真を選ぶと、ここに表示されます</div>
+      <div id="mi_ctrl" style="display:none">
+        <label>背景の色</label>
+        <div class="swatches" id="mi_bg">
+          <button class="sw on" data-c="#ffffff" style="background:#ffffff" type="button" aria-label="白"></button>
+          <button class="sw" data-c="#f3eee6" style="background:#f3eee6" type="button" aria-label="ベージュ"></button>
+          <button class="sw" data-c="#e9e9eb" style="background:#e9e9eb" type="button" aria-label="グレー"></button>
+          <button class="sw" data-c="#1f1d1a" style="background:#1f1d1a" type="button" aria-label="黒"></button>
+        </div>
+        <div class="row2">
+          <div><label>大きさ</label><input type="range" id="mi_zoom" min="50" max="200" value="90"></div>
+          <div><label>明るさ</label><input type="range" id="mi_bright" min="70" max="140" value="105"></div>
+          <div><label>左右の位置</label><input type="range" id="mi_x" min="-50" max="50" value="0"></div>
+          <div><label>上下の位置</label><input type="range" id="mi_y" min="-50" max="50" value="0"></div>
+        </div>
+        <label for="mi_text">画像に入れる文字(なくてもOK)</label>
+        <input id="mi_text" placeholder="例:日本未入荷 / 送料無料 / ブランド名">
+        <label class="check" style="margin-top:10px"><input type="checkbox" id="mi_frame"> 細い枠をつける</label>
+        <button class="btn" id="mi_done" type="button">これで完成!</button>
+        <img id="mi_out" alt="完成した商品画像">
+        <div class="small" id="mi_save" style="display:none;margin-top:6px">完成画像を長押し(パソコンは右クリック)すると保存できます。LINEで担当者に送ってみてください。</div>
+      </div>
+    </div>
+    </div>
+    <div class="point">
+      <b>背景を消すと、ぐっとお店らしくなります</b>
+      無料アプリ「Photoroom」を使うと、写真の背景をワンタップで消せます。背景を消してからCanvaやこの画面に読み込むと、お店のような仕上がりになります。
+    </div>
+    <div class="done" id="midone">ステップ4 クリア!</div>
+    <div class="next" id="minext">画像づくり、おつかれさまでした!残りは1つです。<button class="btn sub" type="button" data-go="m4">ステップ5を開く</button></div>
+  </section>
+
+  <!-- M4 -->
+  <section class="card" id="m4" hidden>
+    <h2>ステップ5:自分のショップを準備する</h2>
+    <p class="why">スタートアップMTG後すぐにアカウントを作れるよう、ショップの顔になる部分を下書きしておきましょう。ここに書いたものはスタートアップMTGで一緒に見直します。</p>
+
+    <details class="ref" open>
+      <summary>BUYMA登録の流れ(予習)</summary>
+      <div class="small" style="margin:6px 0 8px">実際の登録はスタートアップMTG後に、動画を見ながら一緒に進めます。今は流れを知っておくだけで大丈夫です。</div>
+      <ol class="clist">
+        <li>BUYMAのトップページ右上の「会員登録」を押す</li>
+        <li>メールアドレス、パスワード、ニックネームを入れる。<b>ニックネームがそのままショッパー名になり、後から変更できません</b></li>
+        <li>届いたメールから登録を完了する</li>
+        <li>「基本情報設定」を順番に入れる(自己紹介文は後からでOK)</li>
+        <li>パーソナルショッパーのプロフィールを整える。完璧でなくて大丈夫。6割くらいの完成度で進めましょう</li>
+        <li>売上を受け取る口座を登録する(楽天銀行だと振込手数料が安く済みます)</li>
+        <li>利用規約を読む。特に第8条・第11条・第13条は必ず目を通しておきましょう</li>
+      </ol>
+    </details>
+
+    <details class="ref">
+      <summary>参考:人気ショップはここを工夫しています</summary>
+      <svg class="fig" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ショップページの例" font-family="Noto Sans JP, sans-serif">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3a55"/><stop offset="1" stop-color="#c98a6a"/></linearGradient></defs>
+<rect x="0.5" y="0.5" width="319" height="250" rx="12" fill="#fff" stroke="#e6e1d8"/>
+<path d="M12 0.5 h296 a12 12 0 0 1 12 12 v88 h-319 v-88 a12 12 0 0 1 12 -12z" fill="url(#sky)"/>
+<path d="M0.5 100 v-22 h18 v-14 h12 v-10 h8 v24 h16 v-30 l8 -8 l8 8 v30 h14 v-18 h20 v22 h10 v-40 h6 v-6 h6 v6 h6 v40 h18 v-26 h22 v16 h14 v-34 h10 v34 h16 v-20 h20 v24 h16 v-12 h18 v20 h18 v-16 h12 v38 z" fill="#1d2433" opacity=".85"/>
+<circle cx="52" cy="104" r="30" fill="#f3eee6" stroke="#fff" stroke-width="4"/>
+<rect x="44" y="96" width="16" height="22" rx="3" fill="#d9a7b0"/><rect x="48" y="88" width="8" height="8" fill="#c9a24a"/>
+<text x="16" y="156" font-size="18" font-weight="700" fill="#1f1d1a">Luce Boutique</text>
+<text x="16" y="174" font-size="11" fill="#6b665e">パーソナルショッパー(例)</text>
+<text x="16" y="198" font-size="12" fill="#1f1d1a">ご覧いただきありがとうございます。海外ブランドの</text>
+<text x="16" y="216" font-size="12" fill="#1f1d1a">新作を中心に、日本では手に入りにくいアイテムを</text>
+<text x="16" y="234" font-size="12" fill="#1f1d1a">お届けしています。</text>
+<g font-size="11" font-weight="700" fill="#fff">
+<rect x="196" y="10" width="112" height="22" rx="11" fill="#1f5f5b"/><text x="252" y="25" text-anchor="middle">① カバー画像</text>
+<rect x="92" y="96" width="84" height="22" rx="11" fill="#1f5f5b"/><text x="134" y="111" text-anchor="middle">② アイコン</text>
+<rect x="196" y="142" width="112" height="22" rx="11" fill="#1f5f5b"/><text x="252" y="157" text-anchor="middle">③ ショッパー名</text>
+</g>
+<rect x="196" y="258" width="112" height="22" rx="11" fill="#1f5f5b"/><text x="252" y="273" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">④ 自己紹介文</text>
+<path d="M252 258 v-14" stroke="#1f5f5b" stroke-width="2"/>
+</svg>
+      <ul class="clist">
+        <li><b>ショッパー名:</b>短くて読みやすく、海外ブランドを扱うお店らしい名前(例:Milano Select、Luce Boutique)</li>
+        <li><b>プロフィール画像(アイコン):</b>香水、花、ペット、海外の雑貨など、おしゃれな雰囲気の写真</li>
+        <li><b>カバー画像:</b>海外の街並み、夜景、風景など、ショップの世界観が伝わる写真</li>
+        <li><b>自己紹介文:</b>お客様が「このお店なら安心」と思える文章。ショッパーランキング上位の人の文章を参考に、自分の言葉で書きます</li>
+      </ul>
+      <div class="links">
+        <div class="small" style="margin-bottom:6px">実際の人気ショップを見てみましょう(BUYMAが開きます)</div>
+        <a class="lk" href="https://www.buyma.com/rank/buyer/fashion.html" target="_blank" rel="noopener"><b>パーソナルショッパーランキング</b><span>上位ショップの名前・アイコン・自己紹介文を参考に</span></a>
+        <a class="lk" href="https://www.buyma.com/buyer/premium/" target="_blank" rel="noopener"><b>プレミアムパーソナルショッパー</b><span>BUYMAが認めた実績のあるショップの一覧</span></a>
+        <a class="lk" href="https://www.buyma.com/buyer/" target="_blank" rel="noopener"><b>BUYMA公式:出品者になって売るには</b><span>出品者の体験談や、BUYMA事務局のサポート内容</span></a>
+      </div>
+      <div class="item" style="margin-top:8px">
+        <div class="src">自己紹介文の例</div>
+        ご覧いただきありがとうございます。海外ブランドの新作を中心に、日本では手に入りにくいアイテムをお届けしています。一つひとつのご注文を丁寧に対応いたしますので、気になる商品がございましたらお気軽にお問い合わせください。
+      </div>
+    </details>
+
+    <label for="s_name">ショッパー名の候補(後から変更できないので、いくつか考えて一番いいものを入れてみましょう)</label>
+    <input id="s_name" placeholder="例:Milano Select / Luce Boutique">
+
+    <label for="s_intro">自己紹介文の下書き</label>
+    <textarea id="s_intro" placeholder="どんなお店か、どんな想いで商品を届けたいかを書いてみましょう。人気ショッパーの自己紹介文を3つ読んでから書くと書きやすいです。"></textarea>
+    <button class="btn sub" id="s_usesample" type="button" style="margin-top:8px">例文を入れて、自分らしくアレンジする</button>
+
+    <label>プロフィール画像とカバー画像(試しに入れてみましょう)</label>
+    <div class="row2">
+      <label class="upload" style="margin-top:0;font-size:13px">アイコン画像を選ぶ<input type="file" id="s_icon" accept="image/*"></label>
+      <label class="upload" style="margin-top:0;font-size:13px">カバー画像を選ぶ<input type="file" id="s_cover" accept="image/*"></label>
+    </div>
+
+    <label>あなたのショップのイメージ</label>
+    <div class="shop">
+      <div class="shop_cover" id="pv_cover"></div>
+      <div class="shop_body">
+        <div class="shop_icon" id="pv_icon"></div>
+        <div class="shop_name" id="pv_name">ショッパー名</div>
+        <div class="shop_sub">パーソナルショッパー</div>
+        <div class="shop_intro" id="pv_intro">ここに自己紹介文が表示されます。</div>
+      </div>
+    </div>
+
+    <label>準備できたものにチェック</label>
+    <label class="check"><input type="checkbox" class="s_chk"> プロフィール画像に使う写真を用意した(自分で撮った写真か、使用が許可されたフリー素材)</label>
+    <label class="check"><input type="checkbox" class="s_chk"> カバー画像に使う写真を用意した</label>
+    <label class="check"><input type="checkbox" class="s_chk"> 画像編集アプリ(Canva / Photoroom)を入れた</label>
+    <label class="check"><input type="checkbox" class="s_chk"> 売上を受け取る銀行口座を決めた</label>
+    <label class="check"><input type="checkbox" class="s_chk"> 1週間の作業時間を決めた</label>
+
+    <button class="btn" id="m4check" type="button">ステップ5を完了する</button>
+    <div id="m4fb"></div>
+    <div class="done" id="m4done">ステップ5 クリア!</div>
+  </section>
+
+  <div class="badge" id="badge">
+    <b>準備完了です!</b>
+    スタートアップMTGでは、今日入力した内容から一緒にスタートします。
+  </div>
+
+  <section class="card">
+    <h2>担当者に報告する</h2>
+    <p class="why" style="margin-bottom:0">進み具合と、ステップ5で書いた内容をコピーして、LINEで送ってください。途中まででも大丈夫です。</p>
+    <button class="btn" id="copyBtn" type="button">報告をコピーする</button>
+    <div class="copied" id="copied"></div>
+    <textarea id="fallback" readonly></textarea>
+  </section>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var yen = function(n){ return "¥" + Math.round(n).toLocaleString("ja-JP"); };
+  var ORDER = ["m1","m2","m3","mi","m4"];
+  var state = { m1:false, m2:false, m3:false, m4:false, q:{}, c:{} };
+  try { var saved = JSON.parse(localStorage.getItem("buyma_steps_v2") || "null"); if (saved) state = Object.assign(state, saved); } catch(e) {}
+  function save(){ try { localStorage.setItem("buyma_steps_v2", JSON.stringify(state)); } catch(e) {} }
+
+  // tabs
+  $("tabs").addEventListener("click", function(e){
+    var b = e.target.closest(".tab"); if(!b || b.classList.contains("lock")) return;
+    show(b.dataset.t);
+  });
+  function show(id){
+    ORDER.forEach(function(m){ $(m).hidden = m !== id; });
+    Array.prototype.forEach.call($("tabs").children, function(t){ t.classList.toggle("on", t.dataset.t === id); });
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function updateProgress(){
+    var n = ORDER.filter(function(m){ return state[m]; }).length;
+    var p = Math.round(n / ORDER.length * 100);
+    $("pct").textContent = p + "%";
+    $("barfill").style.width = p + "%";
+    ORDER.forEach(function(m){
+      $(m + "done").style.display = state[m] ? "block" : "none";
+      var t = document.querySelector('.tab[data-t="' + m + '"]');
+      var prev = ORDER[ORDER.indexOf(m) - 1];
+      var locked = prev && !state[prev];
+      t.classList.toggle("lock", !!locked);
+      t.querySelector(".d").textContent = state[m] ? "クリア" : locked ? "未開放" : ({m1:"しくみ",m2:"利益のしくみ",m3:"出品入力",mi:"画像づくり",m4:"ショップ準備"})[m];
+      var nx = $(m + "next"); if (nx) nx.style.display = state[m] ? "block" : "none";
+    });
+    $("badge").style.display = n === ORDER.length ? "block" : "none";
+    save();
+  }
+
+  // ---------- M1 quiz ----------
+  var quiz = [
+    { q:"BUYMAはどんなサイト？", o:["中古品を売り買いするフリマアプリ","世界中の出品者から海外ブランド品を買える通販サイト","日本のお店だけが出店する通販サイト"], a:1, e:"BUYMAは、世界中の出品者から海外ブランド品を買える通販サイトです。あなたはここで商品を紹介する側になります。" },
+    { q:"あなたがBUYMAでやることは？", o:["商品を選んで出品すること","海外のお店に行って買い付けること","商品を梱包して発送すること"], a:0, e:"あなたがやるのは、商品を選んで出品することです。買い付けや発送はあなたの仕事ではありません。" },
+    { q:"出品する前に、商品を先に買っておく必要はある？", o:["ある。在庫を用意してから出品する","ない。注文が入ってから仕入れる"], a:1, e:"注文が入ってから仕入れるので、先に商品を買う必要はありません。売れ残りの心配もありません。" },
+    { q:"商品が売れたら、どうすればいい？", o:["自分で海外のお店に注文する","事務局に連絡する","何もしなくていい"], a:1, e:"事務局に連絡すれば、買い付けから検品・発送まで対応してもらえます。" },
+    { q:"出品したあと、大事なことは？", o:["出品したらあとは待つだけ","価格や写真を見直して、見てもらえる工夫を続ける"], a:1, e:"出品してからがスタートです。見直しを続けるほど、お客様の目に留まりやすくなります。" }
+  ];
+  var qbox = $("quiz");
+  quiz.forEach(function(item, i){
+    var d = document.createElement("div"); d.className = "q";
+    d.innerHTML = '<div class="qt">Q' + (i+1) + '. ' + item.q + '</div><div class="opts"></div><div class="fb"></div>';
+    var opts = d.querySelector(".opts"), fb = d.querySelector(".fb");
+    item.o.forEach(function(t, j){
+      var b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = t;
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(opts.children, function(x){ x.classList.remove("ok","ng"); });
+        var right = j === item.a;
+        b.classList.add(right ? "ok" : "ng");
+        fb.className = "fb " + (right ? "ok" : "ng");
+        fb.textContent = (right ? "正解! " : "おしい! もう一度選んでみましょう。 ") + (right ? item.e : "");
+        if (right) { state.q[i] = true; checkM1(); }
+      });
+      opts.appendChild(b);
+    });
+    if (state.q[i]) { opts.children[item.a].classList.add("ok"); fb.className = "fb ok"; fb.textContent = "正解! " + item.e; }
+    qbox.appendChild(d);
+  });
+
+  function checkM1(){ if (Object.keys(state.q).length >= quiz.length && state.fav) state.m1 = true; updateProgress(); }
+  if (state.fav) { $("m1fav").value = state.fav; $("m1favfb").className = "fb ok"; $("m1favfb").textContent = "いいですね!"; }
+  $("m1favbtn").addEventListener("click", function(){
+    var v = $("m1fav").value.trim();
+    if (v.length < 2) { $("m1favfb").className = "fb ng"; $("m1favfb").textContent = "気になった商品の名前を書いてみましょう。"; return; }
+    state.fav = v;
+    $("m1favfb").className = "fb ok"; $("m1favfb").textContent = "いいですね!こういう「気になる」がお客様の気持ちです。出品するときのヒントになります。";
+    checkM1();
+  });
+
+  // ---------- M2 profit ----------
+  var calc = [
+    { q:"このバッグが1つ売れたとき、あなたに残るお金(利益)はいくら？", o:["100,000円","75,000円","12,300円"], a:2, e:"お客様が払う代金から、仕入れ値・送料・手数料が支払われ、残った 12,300円 があなたの利益です。" },
+    { q:"では、同じバッグが2つ売れたら？", o:["12,300円","24,600円","200,000円"], a:1, e:"1つ12,300円なので、2つで24,600円。出品を増やして売れる数が増えるほど、残るお金も積み上がります。" },
+    { q:"BUYMAにお店を持っているだけで、毎月かかる費用は？", o:["月に数万円かかる","0円(費用がかかるのは売れたときだけ)"], a:1, e:"BUYMAはお店の維持費が0円です。売れなければ費用はかからないので、安心してお店を続けられます。" }
+  ];
+  var cbox = $("calc");
+  calc.forEach(function(item, i){
+    var d = document.createElement("div"); d.className = "q";
+    d.innerHTML = '<div class="qt">Q' + (i+1) + '. ' + item.q + '</div><div class="opts"></div><div class="fb"></div>';
+    var opts = d.querySelector(".opts"), fb = d.querySelector(".fb");
+    item.o.forEach(function(t, j){
+      var b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = t;
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(opts.children, function(x){ x.classList.remove("ok","ng"); });
+        var right = j === item.a;
+        b.classList.add(right ? "ok" : "ng");
+        fb.className = "fb " + (right ? "ok" : "ng");
+        fb.textContent = right ? "正解! " + item.e : "おしい! 上の例をもう一度見てみましょう。";
+        if (right) { state.c[i] = true; checkM2(); }
+      });
+      opts.appendChild(b);
+    });
+    if (state.c[i]) { opts.children[item.a].classList.add("ok"); fb.className = "fb ok"; fb.textContent = "正解! " + item.e; }
+    cbox.appendChild(d);
+  });
+  function checkM2(){ if (state.c[0] && state.c[1] && state.c[2]) state.m2 = true; updateProgress(); }
+
+  // ---------- M3 form ----------
+  var answers = {
+    f_cat:{v:"b", ng:"バッグなので「バッグ・カバン > トートバッグ」です。カテゴリが違うと、探しているお客様に見つけてもらえません。"},
+    f_color:{v:"black", ng:"商品情報の色は黒なので、ブラックを選びましょう。"},
+    f_season:{v:"fw25", ng:"発売時期が2025年の秋冬なので、2025-26 秋冬です。"},
+    f_buy:{v:"it", ng:"イタリアのお店で買って、イタリアから送るので、どちらもイタリアです。"},
+    f_ship:{v:"dhl", ng:"商品情報に「イタリアからDHLで発送」とあります。"},
+    f_limit:{v:"2w", ng:"購入期限は自分で決めます。目安は1週間〜1ヶ月くらいです。"}
+  };
+  $("m3check").addEventListener("click", function(){
+    var msgs = [], ok = true;
+    var title = $("f_title").value;
+    if (!/prada|プラダ/i.test(title)) { ok = false; msgs.push("商品名にブランド名(PRADA / プラダ)を入れましょう。お客様はブランド名で検索します。"); }
+    Object.keys(answers).forEach(function(k){
+      var el = $(k);
+      var right = el.value === answers[k].v;
+      el.style.borderColor = right ? "var(--ok)" : "var(--ng)";
+      if (!right) { ok = false; msgs.push(answers[k].ng); }
+    });
+    var code = $("f_code").value.replace(/\s/g,"");
+    if (code !== "1BG505_R064_F0002") { ok = false; msgs.push("品番は商品情報のものをそのままコピーして貼り付けます。"); $("f_code").style.borderColor = "var(--ng)"; }
+    else { $("f_code").style.borderColor = "var(--ok)"; }
+    var fb = $("m3fb");
+    if (ok) {
+      fb.innerHTML = '<div class="fb ok">全問正解! 出品フォームの入力は、スタートアップMTG後にこの流れで進めていきます。</div>';
+      state.m3 = true; updateProgress();
+    } else {
+      fb.innerHTML = '<div class="fb ng">' + msgs.join("<br>") + '</div>';
+    }
+  });
+
+  // ---------- M4 shop ----------
+  try {
+    if (state.s_name) $("s_name").value = state.s_name;
+    if (state.s_intro) $("s_intro").value = state.s_intro;
+    if (state.s_chk) Array.prototype.forEach.call(document.querySelectorAll(".s_chk"), function(c, i){ c.checked = !!state.s_chk[i]; });
+  } catch(e) {}
+  function saveShop(){
+    state.s_name = $("s_name").value;
+    state.s_intro = $("s_intro").value;
+    state.s_chk = Array.prototype.map.call(document.querySelectorAll(".s_chk"), function(c){ return c.checked; });
+    save();
+  }
+  ["s_name","s_intro"].forEach(function(id){ $(id).addEventListener("input", saveShop); });
+  Array.prototype.forEach.call(document.querySelectorAll(".s_chk"), function(c){ c.addEventListener("change", saveShop); });
+  $("m4check").addEventListener("click", function(){
+    saveShop();
+    var msgs = [];
+    if ($("s_name").value.trim().length < 2) msgs.push("ショッパー名の候補を書いてみましょう。");
+    if ($("s_intro").value.trim().length < 30) msgs.push("自己紹介文は30文字以上を目安に書いてみましょう。完璧でなくて大丈夫です。");
+    var n = state.s_chk.filter(Boolean).length;
+    if (n < 3) msgs.push("チェック項目を3つ以上進めておきましょう(今 " + n + " / 5)。");
+    if (msgs.length) { $("m4fb").innerHTML = '<div class="fb ng">' + msgs.join("<br>") + '</div>'; return; }
+    $("m4fb").innerHTML = '<div class="fb ok">お疲れさまでした! この下書きをスタートアップMTGで一緒に仕上げます。</div>';
+    state.m4 = true; updateProgress();
+  });
+
+  // ---------- MI image ----------
+  (function(){
+    var img = null, bg = "#ffffff", cv = null;
+    function draw(){
+      if (!img) return;
+      var W = 1080, ctx = cv.getContext("2d");
+      ctx.fillStyle = bg; ctx.fillRect(0,0,W,W);
+      var z = $("mi_zoom").value / 100;
+      var scale = Math.min(W / img.width, W / img.height) * z;
+      var w = img.width * scale, h = img.height * scale;
+      var x = (W - w) / 2 + $("mi_x").value / 100 * W / 2;
+      var y = (W - h) / 2 + $("mi_y").value / 100 * W / 2;
+      ctx.filter = "brightness(" + $("mi_bright").value + "%)";
+      ctx.drawImage(img, x, y, w, h);
+      ctx.filter = "none";
+      if ($("mi_frame").checked) { ctx.strokeStyle = bg === "#1f1d1a" ? "#ffffff" : "#1f1d1a"; ctx.lineWidth = 6; ctx.strokeRect(36,36,W-72,W-72); }
+      var t = $("mi_text").value.trim();
+      if (t) {
+        ctx.font = "700 56px 'Noto Sans JP', sans-serif";
+        var tw = ctx.measureText(t).width + 64;
+        ctx.fillStyle = "rgba(31,29,26,.82)";
+        ctx.fillRect((W - tw) / 2, W - 150, tw, 92);
+        ctx.fillStyle = "#ffffff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(t, W / 2, W - 104);
+      }
+    }
+    $("mi_file").addEventListener("change", function(e){
+      var f = e.target.files && e.target.files[0]; if (!f) return;
+      var url = URL.createObjectURL(f);
+      var im = new Image();
+      im.onload = function(){
+        img = im;
+        if (!cv) { cv = document.createElement("canvas"); cv.width = 1080; cv.height = 1080; $("mi_wrap").textContent = ""; $("mi_wrap").appendChild(cv); }
+        $("mi_ctrl").style.display = "block";
+        $("mi_out").style.display = "none"; $("mi_save").style.display = "none";
+        draw();
+      };
+      im.src = url;
+    });
+    $("mi_bg").addEventListener("click", function(e){
+      var b = e.target.closest(".sw"); if (!b) return;
+      bg = b.dataset.c;
+      Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+      draw();
+    });
+    ["mi_zoom","mi_bright","mi_x","mi_y","mi_text"].forEach(function(id){ $(id).addEventListener("input", draw); });
+    $("mi_frame").addEventListener("change", draw);
+    $("mi_done").addEventListener("click", function(){
+      if (!img) return;
+      draw();
+      try { $("mi_out").src = cv.toDataURL("image/jpeg", 0.9); $("mi_out").style.display = "block"; $("mi_save").style.display = "block"; } catch(err) {}
+      state.mi = true; updateProgress();
+    });
+  })();
+
+  // ---------- MI canva mode + shop preview ----------
+  (function(){
+    $("mi_mode").addEventListener("click", function(e){
+      var b = e.target.closest(".tab"); if (!b) return;
+      Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+      $("mode_canva").hidden = b.dataset.m !== "canva";
+      $("mode_easy").hidden = b.dataset.m !== "easy";
+    });
+    try { if (state.cv) Array.prototype.forEach.call(document.querySelectorAll(".cv_chk"), function(c, i){ c.checked = !!state.cv[i]; }); } catch(e) {}
+    Array.prototype.forEach.call(document.querySelectorAll(".cv_chk"), function(c){
+      c.addEventListener("change", function(){ state.cv = Array.prototype.map.call(document.querySelectorAll(".cv_chk"), function(x){ return x.checked; }); save(); });
+    });
+    $("cv_file").addEventListener("change", function(e){
+      var f = e.target.files && e.target.files[0]; if (!f) return;
+      $("cv_out").src = URL.createObjectURL(f); $("cv_out").style.display = "block"; $("cv_done").style.display = "block";
+    });
+    $("cv_done").addEventListener("click", function(){ state.mi = true; updateProgress(); });
+
+    function bgFrom(input, el){
+      $(input).addEventListener("change", function(e){
+        var f = e.target.files && e.target.files[0]; if (!f) return;
+        $(el).style.backgroundImage = "url(" + URL.createObjectURL(f) + ")";
+      });
+    }
+    bgFrom("s_icon","pv_icon"); bgFrom("s_cover","pv_cover");
+    function pv(){
+      $("pv_name").textContent = $("s_name").value.trim() || "ショッパー名";
+      $("pv_intro").textContent = $("s_intro").value.trim() || "ここに自己紹介文が表示されます。";
+    }
+    ["s_name","s_intro"].forEach(function(id){ $(id).addEventListener("input", pv); });
+    $("s_usesample").addEventListener("click", function(){
+      $("s_intro").value = "ご覧いただきありがとうございます。海外ブランドの新作を中心に、日本では手に入りにくいアイテムをお届けしています。一つひとつのご注文を丁寧に対応いたしますので、気になる商品がございましたらお気軽にお問い合わせください。";
+      $("s_intro").dispatchEvent(new Event("input")); $("s_intro").focus();
+    });
+    pv();
+  })();
+
+  // ---------- report ----------
+  $("copyBtn").addEventListener("click", function(){
+    saveShop();
+    var mark = function(b){ return b ? "クリア" : "未完了"; };
+    var n = ORDER.filter(function(m){ return state[m]; }).length;
+    var text = "【MTG前 準備ステップ 報告】\n準備完了度:" + Math.round(n/ORDER.length*100) + "%\n" +
+      "ステップ1(しくみ):" + mark(state.m1) + "\nステップ2(利益のしくみ):" + mark(state.m2) +
+      "\nステップ3(出品入力):" + mark(state.m3) + "\nステップ4(画像づくり):" + mark(state.mi) + "\nステップ5(ショップ準備):" + mark(state.m4) +
+      "\n\nBUYMAで気になった商品:" + (state.fav || "(未記入)") + "\n\nショッパー名の候補:" + ($("s_name").value || "(未記入)") +
+      "\n自己紹介文の下書き:\n" + ($("s_intro").value || "(未記入)");
+    var done = function(){ $("copied").textContent = "コピーしました。LINEに貼り付けて送ってください。"; };
+    var fail = function(){ var t = $("fallback"); t.style.display = "block"; t.value = text; t.rows = 8; t.focus(); t.select(); $("copied").textContent = "下の文章を長押ししてコピーしてください。"; };
+    try { navigator.clipboard.writeText(text).then(done, fail); } catch(e) { fail(); }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-go]"), function(btn){
+    btn.addEventListener("click", function(){ show(btn.dataset.go); });
+  });
+  updateProgress();
+  var cur = ORDER.filter(function(m){ return !state[m]; })[0] || "m4";
+  show(cur);
+})();
+</script>
+</body>
+</html>

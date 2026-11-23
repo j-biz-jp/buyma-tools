@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>設定手順書 | BUYMAパートナー専用ツールをClaudeなしで動かす</title>
+<style>
+body{margin:0;background:#fff;color:#2e2b28;font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;line-height:1.8;font-size:15.5px}
+.wrap{max-width:760px;margin:0 auto;padding:40px 22px 80px}
+h1{font-size:26px;line-height:1.4;margin:0 0 6px;color:#000}
+.lead{color:#5d5852;margin:0 0 28px}
+h2{font-size:20px;margin:44px 0 10px;padding-bottom:6px;border-bottom:2px solid #000;color:#000}
+h3{font-size:16px;margin:22px 0 6px;color:#000}
+ol,ul{padding-left:1.4em}
+li{margin:6px 0}
+code,.k{font-family:Menlo,Consolas,monospace;background:#f2efea;padding:1px 6px;border-radius:4px;font-size:.92em}
+.btn{display:inline-block;border:1px solid #bbb;border-radius:6px;padding:0 8px;background:#f7f7f7;font-size:.92em;white-space:nowrap}
+.box{background:#f6f3ee;border-radius:8px;padding:14px 16px;margin:14px 0}
+.warn{background:#fbeeee;border-left:4px solid #6b1e2a;padding:12px 16px;margin:14px 0;border-radius:0 8px 8px 0}
+.done{background:#eef5ef;border-left:4px solid #2f6b3a;padding:12px 16px;margin:14px 0;border-radius:0 8px 8px 0}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}
+td,th{border:1px solid #ddd6cc;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f6f3ee}
+.toc a{color:#6b1e2a}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>BUYMAパートナー専用ツールを、Claudeなしで動かす設定手順</h1>
+<p class="lead">GitHub(ギットハブ)という無料のサービスを使って、「トレンドレーダー」と「ショップ準備ステップ」をインターネットに公開し、トレンドレーダーのデータを毎朝自動で更新します。費用はかかりません。作業時間の目安は30分です。</p>
+
+<div class="box">
+<b>この手順でできるようになること</b>
+<ul>
+<li>お客様は <code>https://(あなたのユーザー名).github.io/(リポジトリ名)/</code> のようなURLで、ツールを開けます。</li>
+<li>毎朝6時40分ごろ(日本時間)に、BUYMAの人気ランキングを自動で取り込み、トレンドレーダーが更新されます。</li>
+<li>Claudeにログインしていなくても、誰も操作しなくても動き続けます。</li>
+</ul>
+</div>
+
+<p class="toc"><b>目次</b><br>
+1. <a href="#s1">GitHubのアカウントを作る</a><br>
+2. <a href="#s2">リポジトリ(ファイルの置き場所)を作る</a><br>
+3. <a href="#s3">ファイルをアップロードする</a><br>
+4. <a href="#s4">毎朝の自動更新を設定する</a><br>
+5. <a href="#s5">自動更新に書き込みの許可を出す</a><br>
+6. <a href="#s6">ページを公開する</a><br>
+7. <a href="#s7">試しに1回更新してみる</a><br>
+8. <a href="#s8">お客様に渡す</a><br>
+9. <a href="#s9">パスワードを変えたいとき</a><br>
+10. <a href="#s10">うまくいかないとき</a></p>
+
+<h2 id="s0">はじめに:フォルダの中身</h2>
+<table>
+<tr><th>ファイル・フォルダ</th><th>中身</th></tr>
+<tr><td><code>index.html</code></td><td>入口のページ(2つのツールへのリンク)</td></tr>
+<tr><td><code>trend/</code></td><td>トレンドレーダーのページ(index.html)と、データ(data.json)</td></tr>
+<tr><td><code>steps/</code></td><td>ショップ準備ステップのページ</td></tr>
+<tr><td><code>scripts/update_trend.py</code></td><td>毎朝BUYMAのランキングを取り込むプログラム</td></tr>
+<tr><td><code>tools/password.html</code></td><td>パスワードを変えるときに使う道具</td></tr>
+<tr><td><code>GitHub自動実行の設定/update.yml</code></td><td>毎朝の自動更新の設定(手順4で使います)</td></tr>
+<tr><td><code>手順書.html</code></td><td>この手順書(アップロードは不要です)</td></tr>
+</table>
+<p>パスワードは今 <code>buyma2026</code> になっています。</p>
+
+<h2 id="s1">1. GitHubのアカウントを作る</h2>
+<ol>
+<li>パソコンのブラウザで <code>https://github.com/signup</code> を開きます。</li>
+<li>メールアドレス、パスワード、ユーザー名を入れて登録します。<br>ユーザー名はURLの一部になります(例:<code>buyma-partner</code>)。会社名やサービス名に関係する、短い英数字がおすすめです。</li>
+<li>届いたメールの確認コードを入れて、登録を完了します。プランを聞かれたら <b>Free(無料)</b> を選びます。</li>
+</ol>
+
+<h2 id="s2">2. リポジトリ(ファイルの置き場所)を作る</h2>
+<ol>
+<li>GitHubの画面右上の <span class="btn">+</span> を押し、<span class="btn">New repository</span> を選びます。</li>
+<li><b>Repository name</b> に名前を入れます(例:<code>tools</code>)。これもURLの一部になります。</li>
+<li><b>Public</b> を選びます。<br><span style="font-size:.92em;color:#5d5852">無料でページを公開するには Public が必要です。ファイルの中身(ページやプログラム、BUYMAの公開ランキングのデータ)は誰でも見られる状態になります。会員限定の情報や個人情報は入れないでください。</span></li>
+<li><span class="btn">Create repository</span> を押します。</li>
+</ol>
+
+<h2 id="s3">3. ファイルをアップロードする</h2>
+<ol>
+<li>作ったリポジトリの画面で、<span class="btn">uploading an existing file</span> のリンク(または <span class="btn">Add file</span> → <span class="btn">Upload files</span>)を押します。</li>
+<li>お渡ししたフォルダを開き、次のものをまとめて画面にドラッグします。<br><code>index.html</code> / <code>trend</code> フォルダ / <code>steps</code> フォルダ / <code>scripts</code> フォルダ / <code>tools</code> フォルダ</li>
+<li>画面の下の <span class="btn">Commit changes</span> を押します。</li>
+<li>リポジトリのトップに <code>index.html</code>、<code>trend</code>、<code>steps</code>、<code>scripts</code>、<code>tools</code> が並んでいればOKです。</li>
+</ol>
+
+<h2 id="s4">4. 毎朝の自動更新を設定する</h2>
+<p>自動更新の設定ファイルは、パソコンでは隠しフォルダ扱いになって見えないことがあるため、GitHubの画面で直接作ります。</p>
+<ol>
+<li>リポジトリのトップで <span class="btn">Add file</span> → <span class="btn">Create new file</span> を押します。</li>
+<li>ファイル名の欄に、次の文字をそのまま入れます(スラッシュを入れると自動でフォルダになります)。<br><code>.github/workflows/update.yml</code></li>
+<li>お渡ししたフォルダの <code>GitHub自動実行の設定/update.yml</code> をメモ帳(Macはテキストエディット)で開き、中身を全部コピーして、GitHubの大きな入力欄に貼り付けます。</li>
+<li>右上の <span class="btn">Commit changes...</span> → もう一度 <span class="btn">Commit changes</span> を押します。</li>
+</ol>
+
+<h2 id="s5">5. 自動更新に書き込みの許可を出す</h2>
+<ol>
+<li>リポジトリの上のメニューから <span class="btn">Settings</span> を開きます。</li>
+<li>左のメニューの <span class="btn">Actions</span> → <span class="btn">General</span> を押します。</li>
+<li>下のほうの <b>Workflow permissions</b> で <b>Read and write permissions</b> を選び、<span class="btn">Save</span> を押します。</li>
+</ol>
+
+<h2 id="s6">6. ページを公開する</h2>
+<ol>
+<li><span class="btn">Settings</span> の左のメニューから <span class="btn">Pages</span> を開きます。</li>
+<li><b>Build and deployment</b> の <b>Source</b> を <b>Deploy from a branch</b> にします。</li>
+<li><b>Branch</b> を <b>main</b>、その右を <b>/(root)</b> にして <span class="btn">Save</span> を押します。</li>
+<li>1〜3分待って画面を再読み込みすると、上に <b>Your site is live at …</b> とURLが出ます。これがツールの入口のURLです。</li>
+</ol>
+<div class="done">
+<b>この時点で、次のURLで開けるようになっています</b>(<code>ユーザー名</code> と <code>リポジトリ名</code> はご自身のものに置き換えてください)
+<ul>
+<li>入口:<code>https://ユーザー名.github.io/リポジトリ名/</code></li>
+<li>トレンドレーダー:<code>https://ユーザー名.github.io/リポジトリ名/trend/</code></li>
+<li>ショップ準備ステップ:<code>https://ユーザー名.github.io/リポジトリ名/steps/</code></li>
+</ul>
+</div>
+
+<h2 id="s7">7. 試しに1回更新してみる</h2>
+<ol>
+<li>リポジトリの上のメニューから <span class="btn">Actions</span> を開きます。<br>「Workflows aren't being run on this repository」などと出たら、緑のボタン(<span class="btn">I understand my workflows, go ahead and enable them</span>)を押します。</li>
+<li>左の一覧から <b>BUYMAトレンド 毎朝更新</b> を選びます。</li>
+<li>右の <span class="btn">Run workflow</span> → 緑の <span class="btn">Run workflow</span> を押します。</li>
+<li>1〜2分で、一覧に <b>緑のチェック</b> が付けば成功です。</li>
+<li>トレンドレーダーのページを開き、上の「○月○日の朝に更新」が今日の日付になっていれば完成です(反映まで数分かかることがあります)。</li>
+</ol>
+<p>これ以降は、毎朝自動で更新されます。何もしなくて大丈夫です。</p>
+
+<h2 id="s8">8. お客様に渡す</h2>
+<p>LINEなどで、URLとパスワードを送ります。</p>
+<div class="box">【パートナー様専用】BUYMAトレンドレーダーをお届けします。<br>BUYMAの人気ランキングをもとに、売れ筋を見やすくまとめたツールです。気になる商品にハートを付けておくと、順位の動きを追えます。<br>https://ユーザー名.github.io/リポジトリ名/trend/<br>パスワード:buyma2026</div>
+
+<h2 id="s9">9. パスワードを変えたいとき</h2>
+<ol>
+<li><code>https://ユーザー名.github.io/リポジトリ名/tools/password.html</code> を開きます。</li>
+<li>新しいパスワードを入れて <span class="btn">変換する</span> を押すと、手順と貼り付ける文字列が出ます。その通りに、GitHubで <code>trend/index.html</code> と <code>steps/index.html</code> を書き換えます。</li>
+</ol>
+<div class="warn">このパスワードは「会員限定の入口」をつくるためのかんたんな仕組みです。仕組みに詳しい人なら中身を見ることができるので、秘密の情報はツールに載せないでください。</div>
+
+<h2 id="s10">10. うまくいかないとき</h2>
+<table>
+<tr><th>こんなとき</th><th>確認すること</th></tr>
+<tr><td>Actions に赤い×が付いた</td><td>その行を開き、<b>update</b> → <b>BUYMAのランキングを取り込む</b> を開くとエラーの内容が出ます。<br>・「403」「Forbidden」:BUYMAがGitHubからのアクセスを受け付けていません。<br>・「アイテムが ○ 件しか取れませんでした」:BUYMAのページの作りが変わった可能性があります。<br>どちらの場合も、前の日のデータはそのまま残ります。エラーの文章をそのまま担当の方に共有してください。</td></tr>
+<tr><td>「変更を保存する」で失敗する</td><td>手順5の <b>Read and write permissions</b> が保存されているか確認してください。</td></tr>
+<tr><td>ページが開かない(404)</td><td>手順6のあと数分待ってから開き直してください。URLの <code>ユーザー名</code> と <code>リポジトリ名</code> が合っているかも確認してください。</td></tr>
+<tr><td>更新が毎朝ではなく少し遅れる</td><td>GitHubの混み具合で、数十分遅れることがあります。故障ではありません。</td></tr>
+</table>
+
+<h2>補足</h2>
+<ul>
+<li>BUYMAへのアクセスは1日2ページ(人気アイテムランキングと人気ブランドランキング)だけです。BUYMAの利用規約で、このような自動での読み込みが認められているかは、念のため御社でもご確認ください。</li>
+<li>GitHubは、長い間何も変更がないリポジトリの自動実行を止めることがあります。このツールは毎朝データを書き込むので、通常は止まりません。もし止まった場合は、手順7と同じ画面に再開のボタンが出ます。</li>
+<li>Claudeで設定していた毎朝の自動実行は、こちらに切り替えたら止めて大丈夫です。</li>
+</ul>
+</div>
+</body>
+</html>
