@@ -151,17 +151,15 @@ def fetch_cats(old_cats):
     return cats
 
 
-PULSE_N = 30         # アクセス数・お気に入り数を読みにいく商品の数(上位から)
-PULSE_WAIT = 2       # 1商品ごとに空ける秒数(BUYMAに負担をかけないため)
+PULSE_WAIT = 1.5     # 1商品ごとに空ける秒数(BUYMAに負担をかけないため)
 RE_ACCESS = re.compile(r"アクセス[:：]\s*([\d,]+)")
 RE_FAV = re.compile(r"お気に入りアイテム登録[:：]\s*([\d,]+)\s*人")
 
 
-def fetch_pulse(items):
-    """上位の商品ページから、公開されているアクセス数とお気に入り登録数を読む"""
+def fetch_pulse(ids):
+    """商品ページから、公開されているアクセス数とお気に入り登録数を読む(1日1回)"""
     out = {}
-    for row in items[:PULSE_N]:
-        item_id = row[1]
+    for item_id in ids:
         try:
             time.sleep(PULSE_WAIT)
             text = BeautifulSoup(fetch(f"https://www.buyma.com/item/{item_id}/"), "html.parser").get_text(" ")
@@ -215,10 +213,16 @@ def main():
     history = sorted(history, key=lambda h: h["date"])[-KEEP_DAYS:]
 
     cats = fetch_cats(old.get("cats", {}))
-    pulse = [p for p in old.get("pulse", []) if p.get("date") != today]
-    got = fetch_pulse(items)
-    if got:
-        pulse.append({"date": today, "s": got})
+    pulse = list(old.get("pulse", []))
+    got = {}
+    if not any(p.get("date") == today for p in pulse):  # 同じ日の2回目(お昼の回)は読み直さない
+        ids = []
+        for row in items + [r for c in cats.values() for sx in ("women", "men") for r in c.get(sx, [])]:
+            if row[1] not in ids:
+                ids.append(row[1])
+        got = fetch_pulse(ids)
+        if got:
+            pulse.append({"date": today, "s": got})
     pulse = sorted(pulse, key=lambda p: p["date"])[-KEEP_DAYS:]
 
     data = {

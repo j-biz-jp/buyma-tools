@@ -653,9 +653,9 @@ body:not(.locked) #gate{display:none}
       } else if (mvMode === 2) {
         var fl = items.map(function(it){ var q = pulseOf(it.id); return q && q.dFav != null ? {it:it, q:q} : null; }).filter(Boolean)
           .sort(function(a,b){ return b.q.dFav - a.q.dFav; }).slice(0, 8);
-        html = fl.length ? '<p class="lead" style="margin:10px 0 0">' + md(plPrevDate) + 'からお気に入り登録が増えた人数です(人気上位' + Object.keys(plNow).length + '商品が対象)。</p>' + fl.map(function(x){
+        html = fl.length ? '<p class="lead" style="margin:10px 0 0">' + md(plPrevDate) + 'からお気に入り登録が増えた人数です。</p>' + fl.map(function(x){
           return mrow(x.it, '<div><div class="big" style="color:var(--wine)">+' + x.q.dFav.toLocaleString("ja-JP") + '</div><span class="unit">人</span></div>', 'お気に入り ' + x.q.fav.toLocaleString("ja-JP") + '人　' + yen(x.it.price));
-        }).join("") : '<div class="empty"><b>明日から表示されます</b>人気上位の商品のお気に入り登録数を毎日記録して、増え方の大きい商品を出します。</div>';
+        }).join("") : '<div class="empty"><b>明日から表示されます</b>ランキングに出ている商品のお気に入り登録数を毎日記録して、増え方の大きい商品を出します。</div>';
       } else {
         html = newList.slice(0, 10).map(function(it){
           return mrow(it, '<div><div class="big nw">NEW</div><span class="unit">初登場</span></div>', '<b>' + it.rank + '位</b>で初登場　' + yen(it.price));
