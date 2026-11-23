@@ -478,6 +478,7 @@ body:not(.locked) #gate{display:none}
   var $ = function(id){ return document.getElementById(id); };
   var yen = function(n){ return "¥" + Math.round(n).toLocaleString("ja-JP"); };
   var ORDER = ["m1","m2","m3","mi","m4"];
+  var PREVIEW = /[?&]all\b/.test(location.search); // 確認用:URLの末尾に ?all を付けると全ステップを開ける
   var state = { m1:false, m2:false, m3:false, m4:false, q:{}, c:{} };
   try { var saved = JSON.parse(localStorage.getItem("buyma_steps_v2") || "null"); if (saved) state = Object.assign(state, saved); } catch(e) {}
   function save(){ try { localStorage.setItem("buyma_steps_v2", JSON.stringify(state)); } catch(e) {} }
@@ -502,7 +503,7 @@ body:not(.locked) #gate{display:none}
       $(m + "done").style.display = state[m] ? "block" : "none";
       var t = document.querySelector('.tab[data-t="' + m + '"]');
       var prev = ORDER[ORDER.indexOf(m) - 1];
-      var locked = prev && !state[prev];
+      var locked = !PREVIEW && prev && !state[prev];
       t.classList.toggle("lock", !!locked);
       t.querySelector(".d").textContent = state[m] ? "クリア" : locked ? "未開放" : ({m1:"しくみ",m2:"売上の内訳",m3:"出品入力",mi:"画像づくり",m4:"ショップ準備"})[m];
       var nx = $(m + "next"); if (nx) nx.style.display = state[m] ? "block" : "none";
