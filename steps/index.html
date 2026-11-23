@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ショップ準備ステップ</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f4f0;--card:#fff;--ink:#1f1d1a;--sub:#6b665e;--line:#e6e1d8;--acc:#1f5f5b;--accs:#e3efed;--ok:#2f7a3c;--oks:#e6f2e7;--ng:#a3401e;--ngs:#f8e9e2}
 *{box-sizing:border-box}
@@ -68,6 +68,13 @@ input[type=range]{padding:0;border:none;height:28px}
 .clist .check{margin:0}
 details.ref{background:#faf8f4;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px}
 details.ref summary{font-weight:700;cursor:pointer;color:var(--acc)}
+.ic_h{font-size:15px;margin:22px 0 2px;color:var(--ink)}
+.ic_mode,.ic_font{display:flex;gap:6px;margin-top:10px}
+.ic_mode button,.ic_font button{flex:1;font:inherit;font-size:13px;font-weight:700;padding:8px 0;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--sub);cursor:pointer}
+.ic_mode button.on,.ic_font button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.ic_wrap{display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:start;margin-top:12px}
+#ic_cv{width:140px;height:140px;border-radius:50%;border:1px solid var(--line);display:block}
+@media (max-width:380px){ .ic_wrap{grid-template-columns:1fr} #ic_cv{margin:0 auto} }
 .shop{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
 .shop_cover{height:120px;background:linear-gradient(135deg,#d9d3c7,#efe9df) center/cover}
 .shop_body{padding:0 14px 14px;position:relative}
@@ -157,7 +164,7 @@ body:not(.locked) #gate{display:none}
     <button class="tab" data-t="m2" type="button">ステップ2<span class="d">売上の内訳</span></button>
     <button class="tab" data-t="m3" type="button">ステップ3<span class="d">出品入力</span></button>
     <button class="tab" data-t="mi" type="button">ステップ4<span class="d">画像づくり</span></button>
-    <button class="tab" data-t="m4" type="button">ステップ5<span class="d">ショップ名</span></button>
+    <button class="tab" data-t="m4" type="button">ステップ5<span class="d">名前・アイコン</span></button>
   </div>
 
   <!-- M1 -->
@@ -373,8 +380,8 @@ body:not(.locked) #gate{display:none}
 
   <!-- M4 -->
   <section class="card" id="m4" hidden>
-    <h2>ステップ5:ショップ名を考える</h2>
-    <p class="why">BUYMAでは、ショップ名(ショッパー名)がお店の看板になります。後から変えにくいので、いくつか候補を考えておきましょう。</p>
+    <h2>ステップ5:ショップ名とアイコンを考える</h2>
+    <p class="why">BUYMAでは、ショップ名(ショッパー名)とアイコンがお店の看板になります。ショップ名は後から変えにくいので、いくつか候補を考えておきましょう。</p>
 
     <div class="point">
       <b>考えるときのポイント</b>
@@ -398,14 +405,52 @@ body:not(.locked) #gate{display:none}
     <label for="s_name3">候補3</label>
     <input id="s_name3" placeholder="例:Maison Nord">
 
-    <label>ショップ名の見え方</label>
-    <div class="shop">
-      <div class="shop_body" style="padding-top:14px">
-        <div class="shop_name" id="pv_name">ショップ名</div>
-        <div class="shop_sub">パーソナルショッパー</div>
+    <h3 class="ic_h">アイコンを作る</h3>
+    <div class="small">ショップの顔になる丸い画像です。ショップ名の文字で作るか、自分で撮った写真を使います。</div>
+    <div class="ic_mode" id="ic_mode">
+      <button type="button" class="on" data-m="text">文字で作る</button>
+      <button type="button" data-m="photo">写真で作る</button>
+    </div>
+    <div class="ic_wrap">
+      <canvas id="ic_cv" width="600" height="600" aria-label="アイコンのプレビュー"></canvas>
+      <div class="ic_ctrl">
+        <div id="ic_textopts">
+          <label for="ic_text">入れる文字(1〜3文字くらい)</label>
+          <input id="ic_text" maxlength="4" placeholder="例:MS">
+          <label>文字の雰囲気</label>
+          <div class="ic_font" id="ic_font">
+            <button type="button" class="on" data-f="serif">上品</button>
+            <button type="button" data-f="sans">すっきり</button>
+          </div>
+        </div>
+        <div id="ic_photoopts" hidden>
+          <label class="upload" style="margin-top:4px">写真を選ぶ<input type="file" id="ic_file" accept="image/*"></label>
+          <label for="ic_zoom">大きさ</label>
+          <input type="range" id="ic_zoom" min="100" max="250" value="100">
+        </div>
+        <label>背景の色</label>
+        <div class="swatches" id="ic_bg">
+          <button class="sw on" data-c="#1f1d1a" style="background:#1f1d1a" type="button" aria-label="黒"></button>
+          <button class="sw" data-c="#f3eee6" style="background:#f3eee6" type="button" aria-label="ベージュ"></button>
+          <button class="sw" data-c="#ffffff" style="background:#ffffff" type="button" aria-label="白"></button>
+          <button class="sw" data-c="#1f3a5f" style="background:#1f3a5f" type="button" aria-label="ネイビー"></button>
+          <button class="sw" data-c="#6b1e2a" style="background:#6b1e2a" type="button" aria-label="ボルドー"></button>
+          <button class="sw" data-c="#c8b28a" style="background:#c8b28a" type="button" aria-label="ゴールド"></button>
+        </div>
       </div>
     </div>
-    <div class="small" style="margin-top:6px">候補1が表示されます。並べて見比べて、一番しっくりくるものを候補1にしておきましょう。</div>
+    <button class="btn sub" id="ic_done" type="button" style="margin-top:10px">このアイコンで決める</button>
+    <img id="ic_out" alt="完成したアイコン" style="display:none;width:160px;height:160px;border-radius:50%;margin:12px auto 0">
+    <div class="small" id="ic_save" style="display:none;text-align:center;margin-top:6px">画像を長押し(パソコンは右クリック)すると保存できます。</div>
+
+    <label>ショップの見え方</label>
+    <div class="shop">
+      <div class="shop_body" style="padding-top:14px;display:flex;gap:12px;align-items:center">
+        <div class="shop_icon" id="pv_icon" style="margin-top:0;flex:none;width:60px;height:60px"></div>
+        <div><div class="shop_name" id="pv_name" style="margin-top:0">ショップ名</div><div class="shop_sub">パーソナルショッパー</div></div>
+      </div>
+    </div>
+    <div class="small" style="margin-top:6px">ショップ名は候補1が表示されます。並べて見比べて、一番しっくりくるものを候補1にしておきましょう。</div>
 
     <button class="btn" id="m4check" type="button">ステップ5を完了する</button>
     <div id="m4fb"></div>
@@ -451,7 +496,7 @@ body:not(.locked) #gate{display:none}
       var prev = ORDER[ORDER.indexOf(m) - 1];
       var locked = !PREVIEW && prev && !state[prev];
       t.classList.toggle("lock", !!locked);
-      t.querySelector(".d").textContent = state[m] ? "クリア" : locked ? "未開放" : ({m1:"しくみ",m2:"売上の内訳",m3:"出品入力",mi:"画像づくり",m4:"ショップ名"})[m];
+      t.querySelector(".d").textContent = state[m] ? "クリア" : locked ? "未開放" : ({m1:"しくみ",m2:"売上の内訳",m3:"出品入力",mi:"画像づくり",m4:"名前・アイコン"})[m];
       var nx = $(m + "next"); if (nx) nx.style.display = state[m] ? "block" : "none";
     });
     $("badge").style.display = n === ORDER.length ? "block" : "none";
@@ -560,13 +605,76 @@ body:not(.locked) #gate{display:none}
   var NAMES = ["s_name","s_name2","s_name3"];
   try { NAMES.forEach(function(id){ if (state[id]) $(id).value = state[id]; }); } catch(e) {}
   function saveShop(){ NAMES.forEach(function(id){ state[id] = $(id).value; }); save(); }
-  function pv(){ $("pv_name").textContent = $("s_name").value.trim() || "ショップ名"; }
+  // ---------- アイコン ----------
+  var ic = {mode:"text", font:"serif", bg:"#1f1d1a", img:null, done:!!state.icon_done, auto:true};
+  function initials(name){
+    var w = name.replace(/[^A-Za-z0-9\u3040-\u30ff\u4e00-\u9fff ]/g, " ").trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return "";
+    if (/^[A-Za-z0-9]/.test(w[0])) return w.slice(0, 2).map(function(x){ return x[0].toUpperCase(); }).join("");
+    return w[0].slice(0, 1);
+  }
+  function drawIcon(){
+    var cv = $("ic_cv"), c = cv.getContext("2d"), W = 600;
+    c.clearRect(0, 0, W, W);
+    c.save(); c.beginPath(); c.arc(W / 2, W / 2, W / 2, 0, Math.PI * 2); c.clip();
+    c.fillStyle = ic.bg; c.fillRect(0, 0, W, W);
+    if (ic.mode === "photo" && ic.img) {
+      var z = $("ic_zoom").value / 100, sc = Math.max(W / ic.img.width, W / ic.img.height) * z;
+      var w = ic.img.width * sc, h = ic.img.height * sc;
+      c.drawImage(ic.img, (W - w) / 2, (W - h) / 2, w, h);
+    } else if (ic.mode === "text") {
+      var t = $("ic_text").value.trim();
+      var light = ["#ffffff", "#f3eee6", "#c8b28a"].indexOf(ic.bg) >= 0;
+      c.fillStyle = light ? "#1f1d1a" : "#ffffff";
+      c.textAlign = "center"; c.textBaseline = "middle";
+      var size = t.length <= 1 ? 300 : t.length === 2 ? 230 : 170;
+      c.font = (ic.font === "serif" ? "500 " + size + "px 'Bodoni Moda','Times New Roman',serif" : "700 " + size + "px 'Noto Sans JP',sans-serif");
+      c.fillText(t || "?", W / 2, W / 2 + (ic.font === "serif" ? 10 : 6));
+      c.strokeStyle = light ? "rgba(31,29,26,.25)" : "rgba(255,255,255,.35)"; c.lineWidth = 6;
+      c.beginPath(); c.arc(W / 2, W / 2, W / 2 - 34, 0, Math.PI * 2); c.stroke();
+    }
+    c.restore();
+    $("pv_icon").style.backgroundImage = "url(" + cv.toDataURL("image/png") + ")";
+  }
+  function pv(){
+    $("pv_name").textContent = $("s_name").value.trim() || "ショップ名";
+    if (ic.auto) $("ic_text").value = initials($("s_name").value);
+    drawIcon();
+  }
+  if (state.ic_text) { $("ic_text").value = state.ic_text; ic.auto = false; }
+  $("ic_text").addEventListener("input", function(){ ic.auto = false; state.ic_text = this.value; save(); drawIcon(); });
+  $("ic_mode").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return; ic.mode = b.dataset.m;
+    Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+    $("ic_textopts").hidden = ic.mode !== "text"; $("ic_photoopts").hidden = ic.mode !== "photo"; drawIcon();
+  });
+  $("ic_font").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return; ic.font = b.dataset.f;
+    Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); }); drawIcon();
+  });
+  $("ic_bg").addEventListener("click", function(e){
+    var b = e.target.closest(".sw"); if (!b) return; ic.bg = b.dataset.c;
+    Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); }); drawIcon();
+  });
+  $("ic_file").addEventListener("change", function(e){
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    var im = new Image(); im.onload = function(){ ic.img = im; drawIcon(); }; im.src = URL.createObjectURL(f);
+  });
+  $("ic_zoom").addEventListener("input", drawIcon);
+  $("ic_done").addEventListener("click", function(){
+    try { $("ic_out").src = $("ic_cv").toDataURL("image/png"); $("ic_out").style.display = "block"; $("ic_save").style.display = "block"; } catch(err) {}
+    ic.done = true; state.icon_done = true; save();
+  });
   NAMES.forEach(function(id){ $(id).addEventListener("input", function(){ saveShop(); pv(); }); });
+  if (document.fonts && document.fonts.load) Promise.all([document.fonts.load("500 100px 'Bodoni Moda'"), document.fonts.load("700 100px 'Noto Sans JP'")]).then(drawIcon, drawIcon);
   pv();
   $("m4check").addEventListener("click", function(){
     saveShop();
-    if ($("s_name").value.trim().length < 2) { $("m4fb").innerHTML = '<div class="fb ng">候補1にショップ名を入れてみましょう。</div>'; return; }
-    $("m4fb").innerHTML = '<div class="fb ok">お疲れさまでした!考えた候補は、このページに保存されています。</div>';
+    var msgs = [];
+    if ($("s_name").value.trim().length < 2) msgs.push("候補1にショップ名を入れてみましょう。");
+    if (!ic.done) msgs.push("アイコンを作って「このアイコンで決める」を押しましょう。");
+    if (msgs.length) { $("m4fb").innerHTML = '<div class="fb ng">' + msgs.join("<br>") + '</div>'; return; }
+    $("m4fb").innerHTML = '<div class="fb ok">お疲れさまでした!ショップ名の候補はこのページに保存されています。アイコンは長押しで保存しておきましょう。</div>';
     state.m4 = true; updateProgress();
   });
 
