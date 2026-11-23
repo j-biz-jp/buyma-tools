@@ -169,6 +169,24 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .pcflow b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:2px}
 .card .go{display:block;margin-top:6px;text-align:center;font-size:12px;font-weight:700;color:#fff;background:var(--ink);border-radius:6px;padding:6px 0}
 .calc{display:inline-block;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--ink);border:1px solid var(--ink);border-radius:999px;padding:2px 10px;background:#fff;cursor:pointer}
+.tg{display:flex;gap:6px;margin-top:12px}
+.tg button{flex:1;font:inherit;font-size:12.5px;font-weight:700;padding:7px 0;border:1px solid var(--rule);border-radius:999px;background:#fff;color:var(--sub);cursor:pointer}
+.tg button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.caps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.caps div{background:var(--stone);border-radius:8px;padding:10px 12px;white-space:nowrap;overflow:hidden}
+.caps span{display:block;font-size:11.5px;color:var(--sub)}
+.caps b{font-size:20px;font-weight:900;color:var(--up);letter-spacing:-.01em}
+.caps small{font-size:12px;color:var(--ink);margin-left:3px;font-weight:700}
+.caps p{grid-column:1/-1;margin:2px 0 0;font-size:12.5px;color:var(--sub)}
+.caps p b{font-size:13px;color:var(--ink)}
+.caps p.ng{color:var(--down)}
+.more2{margin-top:10px;font-size:12.5px}
+.more2 summary{cursor:pointer;color:var(--ink);font-weight:700}
+.stp2{font-size:12px;font-weight:700;color:var(--ink);margin:10px 0 6px}
+.regions.sale a{border-color:var(--up);color:var(--up)}
+.jd{font-size:12.5px;font-weight:700;margin-top:8px;padding:8px 10px;border-radius:6px;line-height:1.5}
+.jd.ok{background:#e4efe6;color:var(--up)} .jd.mid{background:#fff;color:var(--ink)} .jd.ng{background:var(--winel);color:var(--down)}
+.card .cap{display:block;font-size:11px;font-weight:700;color:var(--up);margin-top:2px}
 /* brand momentum */
 .bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
@@ -292,8 +310,8 @@ body:not(.locked) #gate{display:none}
     <div class="notes" id="notes"></div>
     <section class="pcin">
       <h2>利益チェッカー</h2>
-      <p class="lead">商品を選んで海外の価格を入れるだけで、BUYMAで売ったときの利益の目安がわかります。為替は毎日自動で更新されます。</p>
-      <ol class="pcflow"><li><b>商品を選ぶ</b>下の商品か、ランキングの「利益を計算」から</li><li><b>海外で探す</b>国のボタンを押すと、その国で検索できます</li><li><b>価格を入れる</b>利益と利益率がすぐ出ます</li></ol>
+      <p class="lead">商品を選ぶと、「海外でいくら以下で買えれば利益が出るか」がすぐわかります。為替は毎日自動で更新されます。</p>
+      <ol class="pcflow"><li><b>商品を選ぶ</b>仕入れ値の上限が自動で出ます</li><li><b>海外で探す</b>セール・アウトレットも1タップ</li><li><b>価格を入れる</b>利益が出るかすぐ判定</li></ol>
       <div class="strip" id="pcpick"></div>
     </section>
     <section>
@@ -507,7 +525,7 @@ body:not(.locked) #gate{display:none}
 
     var picks = items.filter(function(it){ return /\d/.test(it.name) && it.img; }).slice(0, 8);
     $("pcpick").innerHTML = picks.map(function(it){
-      return '<a class="card" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" data-pc="' + esc(it.id) + '" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="rk' + (it.rank <= 3 ? ' w' : '') + '">' + it.rank + '</span><div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div><span class="go">利益を計算</span></a>';
+      return '<a class="card" href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" data-pc="' + esc(it.id) + '" target="_blank" rel="noopener">' + pic(it.img, 428, it.name) + '<span class="rk' + (it.rank <= 3 ? ' w' : '') + '">' + it.rank + '</span><div class="br">' + esc(it.brand || "　") + '</div><div class="pr">' + yen(it.price) + '</div><span class="cap" data-capid="' + esc(it.id) + '"></span><span class="go">利益を計算</span></a>';
     }).join("");
 
     // notes
@@ -611,7 +629,8 @@ body:not(.locked) #gate{display:none}
       }).join("");
       wire($("profit"));
     }
-    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); drawProfit(); }
+    function fillCaps(){ Array.prototype.forEach.call(document.querySelectorAll("[data-capid]"), function(el){ var it = byId[el.dataset.capid]; el.textContent = it ? capLine(it) : ""; }); }
+    function drawAll(){ drawBand(); drawWatch(); drawRise(); drawLux(); drawProfit(); if (typeof feeRate === "number") fillCaps(); }
     drawAll();
 
     $("genres").innerHTML = gs.map(function(g){
@@ -757,50 +776,81 @@ body:not(.locked) #gate{display:none}
       return ((it.brand ? it.brand + " " : "") + nm).slice(0, 60);
     }
     var feeRate = store.get("tr_fee", 0.077);
+    var target = store.get("tr_target", 0.10);
+    var CAPS = [["アメリカ","USD","$","us","en"],["ヨーロッパ","EUR","€","it","it"],["イギリス","GBP","£","uk","en"],["韓国","KRW","₩","kr","ko"]].filter(function(c){ return FX[c[1]]; });
+    function capJpy(price, fr, tg, ship, duty){ return price * (1 - fr - tg) - (ship || 0) - (duty || 0); }
+    function fmtCur(v, c){ if (c[1] === "KRW") v = Math.floor(v / 1000) * 1000; else v = Math.floor(v); return c[2] + v.toLocaleString("en-US"); }
+    function capLine(it){ var j = capJpy(it.price, feeRate, target, 0, 0); return j > 0 && FX.USD ? fmtCur(j / FX.USD, CAPS[0]) + "以下で利益" : ""; }
+    function gurl(c, words, sale){ return "https://www.google.com/search?tbm=shop&gl=" + c[0] + "&hl=" + c[1] + "&q=" + encodeURIComponent(words + (sale ? " sale outlet" : "")); }
     function checkerHtml(it){
       var p = PROF[it.id] || {};
       var words = searchWords(it);
       var fxd = D.fx && D.fx.date ? md(D.fx.date) : "";
-      return '<div class="pc"><h4>利益チェッカー</h4><p class="sub">海外の販売価格を入れると、BUYMAで売ったときの利益の目安を計算します。</p>' +
-        '<div class="stp"><span>1</span>海外のお店で価格を調べる</div><div class="regions">' +
-        REGIONS.map(function(rg){ return '<a href="https://www.google.com/search?tbm=shop&gl=' + rg[1] + '&hl=' + rg[2] + '&q=' + encodeURIComponent(words) + '" target="_blank" rel="noopener" data-cur="' + rg[3] + '">' + rg[0] + '</a>'; }).join("") +
-        '</div><div class="q">検索する言葉:' + esc(words) + '</div>' +
+      var regs = REGIONS.map(function(rg){ return [rg[1], rg[2], rg[0], rg[3]]; });
+      return '<div class="pc"><h4>利益チェッカー</h4>' +
+        '<p class="sub">この価格以下で仕入れられれば、目標の利益が出ます。</p>' +
+        '<div class="tg" id="pc_tg">' + [0.10, 0.15, 0.20].map(function(t){ return '<button type="button" data-t="' + t + '" class="' + (Math.abs(t - target) < 1e-9 ? 'on' : '') + '">利益率 ' + Math.round(t * 100) + '%</button>'; }).join("") + '</div>' +
+        '<div class="caps" id="pc_caps"></div>' +
+        '<details class="more2"' + ((p.ship || p.duty) ? ' open' : '') + '><summary>送料・関税・手数料を設定する</summary>' +
+        '<div class="opt"><div><label for="pc_s">送料(円)</label><input id="pc_s" type="number" inputmode="numeric" min="0" value="' + (p.ship || 0) + '"></div>' +
+        '<div><label for="pc_d">関税など(円)</label><input id="pc_d" type="number" inputmode="numeric" min="0" value="' + (p.duty || 0) + '"></div></div>' +
+        '<div class="opt" style="grid-template-columns:1fr"><div><label for="pc_f">BUYMAの手数料</label><select id="pc_f"><option value="0.077"' + (feeRate !== 0.055 ? " selected" : "") + '>7.7%(一般)</option><option value="0.055"' + (feeRate === 0.055 ? " selected" : "") + '>5.5%(プレミアムパーソナルショッパー)</option></select></div></div></details>' +
+        '<div class="stp"><span>1</span>海外のお店で探す</div><div class="regions">' +
+        regs.map(function(rg){ return '<a href="' + gurl(rg, words) + '" target="_blank" rel="noopener" data-cur="' + rg[3] + '">' + rg[2] + '</a>'; }).join("") + '</div>' +
+        '<div class="stp2">セール・アウトレットで探す(安く見つかりやすい)</div><div class="regions sale">' +
+        regs.map(function(rg){ return '<a href="' + gurl(rg, words, true) + '" target="_blank" rel="noopener" data-cur="' + rg[3] + '">' + rg[2] + '</a>'; }).join("") + '</div>' +
+        '<div class="q">検索する言葉:' + esc(words) + '</div>' +
         '<div class="stp"><span>2</span>見つけた価格を入れる</div>' +
-        '<div class="pin"><input id="pc_p" type="number" inputmode="decimal" min="0" step="any" placeholder="例 450" value="' + (p.p != null ? p.p : "") + '" aria-label="海外の価格"><select id="pc_c" aria-label="通貨">' +
+        '<div class="pin"><input id="pc_p" type="number" inputmode="decimal" min="0" step="any" placeholder="例 72" value="' + (p.p != null ? p.p : "") + '" aria-label="海外の価格"><select id="pc_c" aria-label="通貨">' +
         CURS.map(function(c){ return '<option value="' + c[0] + '"' + ((p.cur || "USD") === c[0] ? " selected" : "") + '>' + c[0] + ' ' + c[1] + '</option>'; }).join("") + '</select></div>' +
-        '<div class="opt"><div><label for="pc_s">送料(円)</label><input id="pc_s" type="number" inputmode="numeric" min="0" value="' + (p.ship != null ? p.ship : 0) + '"></div>' +
-        '<div><label for="pc_d">関税など(円)</label><input id="pc_d" type="number" inputmode="numeric" min="0" value="' + (p.duty != null ? p.duty : 0) + '"></div></div>' +
-        '<div class="opt" style="grid-template-columns:1fr"><div><label for="pc_f">BUYMAの手数料</label><select id="pc_f"><option value="0.077"' + (feeRate !== 0.055 ? " selected" : "") + '>7.7%(一般)</option><option value="0.055"' + (feeRate === 0.055 ? " selected" : "") + '>5.5%(プレミアムパーソナルショッパー)</option></select></div></div>' +
         '<div class="res" id="pc_r"></div>' +
         '<div class="fx">為替は' + (fxd ? fxd + 'の' : '') + '参考レート(欧州中央銀行)で、毎日自動で更新されます。カード会社の為替手数料などは含みません。あくまで目安としてお使いください。</div></div>';
     }
     function wireChecker(it){
-      var ids = ["pc_p","pc_c","pc_s","pc_d","pc_f"];
+      var y = function(n){ return (n < 0 ? "-" : "") + "¥" + Math.abs(Math.round(n)).toLocaleString("ja-JP"); };
       function calc(){
         var price = parseFloat($("pc_p").value), cur = $("pc_c").value, ship = +$("pc_s").value || 0, duty = +$("pc_d").value || 0, fr = +$("pc_f").value;
         feeRate = fr; store.set("tr_fee", fr);
+        var cj = capJpy(it.price, fr, target, ship, duty);
+        $("pc_caps").innerHTML = cj > 0 ? CAPS.map(function(c){
+          return '<div><span>' + c[0] + '</span><b>' + fmtCur(cj / FX[c[1]], c) + '</b><small>以下</small></div>';
+        }).join("") + '<p>円にすると <b>' + y(cj) + '</b> 以下 ・ 利益 ' + y(it.price * target) + '(' + Math.round(target * 100) + '%)</p>'
+          : '<p class="ng">送料・関税を含めると、この利益率は難しい商品です。目標の利益率を下げるか、送料の安い仕入れ先を探しましょう。</p>';
+        var rec = PROF[it.id] || {};
+        rec.ship = ship; rec.duty = duty; rec.name = it.name; rec.brand = it.brand; rec.price = it.price; rec.img = it.img || "";
         if (!(price > 0) || !FX[cur]) {
-          $("pc_r").innerHTML = '<div class="empty2">海外の価格を入れると、ここに利益の目安が出ます。</div>';
-          if (PROF[it.id] && !(price > 0)) { delete PROF[it.id]; store.set("tr_profit", PROF); }
-          return;
+          $("pc_r").innerHTML = '<div class="empty2">見つけた価格を入れると、利益が出るかどうかがここに出ます。</div>';
+          delete rec.p; rec.profit = null;
+        } else {
+          var cost = price * FX[cur], fee = it.price * fr, profit = it.price - fee - cost - ship - duty, rate = profit / it.price * 100;
+          var diff = cj - cost;
+          var judge = profit <= 0 ? '<div class="jd ng">この価格だと赤字です。あと ' + y(cost - (it.price - fee - ship - duty)) + ' 安く見つかれば利益が出ます。</div>'
+            : diff >= 0 ? '<div class="jd ok">目標の利益率をクリアしています。</div>'
+            : '<div class="jd mid">利益は出ますが、目標の利益率まではあと ' + y(-diff) + ' 安く仕入れたいところです。</div>';
+          $("pc_r").innerHTML = '<div class="big"><span>利益の目安</span><b class="' + (profit < 0 ? 'neg' : '') + '">' + (profit >= 0 ? '+' : '') + y(profit) + '</b></div>' +
+            '<div class="rate">利益率 ' + rate.toFixed(1) + '%</div>' + judge +
+            '<dl><dt>BUYMAでの価格</dt><dd>' + y(it.price) + '</dd>' +
+            '<dt>BUYMA手数料(' + (fr * 100).toFixed(1) + '%)</dt><dd>-' + y(fee) + '</dd>' +
+            '<dt>仕入れ ' + price.toLocaleString("ja-JP") + ' ' + cur + '<br><small>1' + cur + '=' + FX[cur] + '円</small></dt><dd>-' + y(cost) + '</dd>' +
+            (ship ? '<dt>送料</dt><dd>-' + y(ship) + '</dd>' : '') + (duty ? '<dt>関税など</dt><dd>-' + y(duty) + '</dd>' : '') + '</dl>';
+          rec.p = price; rec.cur = cur; rec.profit = profit; rec.at = t0;
         }
-        var cost = price * FX[cur], fee = it.price * fr, profit = it.price - fee - cost - ship - duty, rate = profit / it.price * 100;
-        var y = function(n){ return (n < 0 ? "-" : "") + "¥" + Math.abs(Math.round(n)).toLocaleString("ja-JP"); };
-        $("pc_r").innerHTML = '<div class="big"><span>利益の目安</span><b class="' + (profit < 0 ? 'neg' : '') + '">' + (profit >= 0 ? '+' : '') + y(profit) + '</b></div>' +
-          '<div class="rate">利益率 ' + rate.toFixed(1) + '%</div>' +
-          '<dl><dt>BUYMAでの価格</dt><dd>' + y(it.price) + '</dd>' +
-          '<dt>BUYMA手数料(' + (fr * 100).toFixed(1) + '%)</dt><dd>-' + y(fee) + '</dd>' +
-          '<dt>仕入れ ' + price.toLocaleString("ja-JP") + ' ' + cur + '<br><small>1' + cur + '=' + FX[cur] + '円</small></dt><dd>-' + y(cost) + '</dd>' +
-          (ship ? '<dt>送料</dt><dd>-' + y(ship) + '</dd>' : '') + (duty ? '<dt>関税など</dt><dd>-' + y(duty) + '</dd>' : '') + '</dl>';
-        PROF[it.id] = {p:price, cur:cur, ship:ship, duty:duty, profit:profit, at:t0, name:it.name, brand:it.brand, price:it.price, img:it.img || ""};
+        if (rec.p != null || rec.ship || rec.duty) PROF[it.id] = rec; else delete PROF[it.id];
         store.set("tr_profit", PROF);
       }
-      ids.forEach(function(i){ $(i).addEventListener("input", calc); $(i).addEventListener("change", function(){ calc(); drawAll(); }); });
+      ["pc_p","pc_c","pc_s","pc_d","pc_f"].forEach(function(i){ $(i).addEventListener("input", calc); $(i).addEventListener("change", function(){ calc(); drawAll(); }); });
+      $("pc_tg").addEventListener("click", function(e){
+        var b = e.target.closest("button"); if (!b) return;
+        target = +b.dataset.t; store.set("tr_target", target);
+        Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+        calc(); drawAll();
+      });
       Array.prototype.forEach.call(document.querySelectorAll(".regions a"), function(a){
         a.addEventListener("click", function(){ if (!$("pc_p").value) $("pc_c").value = a.dataset.cur; });
       });
       calc();
     }
+    fillCaps();
 
     // ---------- 商品カルテ ----------
     var REG = {};
