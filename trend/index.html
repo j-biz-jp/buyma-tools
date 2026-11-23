@@ -91,6 +91,37 @@ h2{font-size:19px;font-weight:900;color:var(--ink);margin:0;letter-spacing:.02em
 .bd .n{font-weight:700;color:var(--ink);font-size:13.5px;line-height:1.3}
 .bd .k{font-size:11px;color:var(--sub)}
 
+/* moves */
+.mvtabs{display:flex;gap:8px;margin:14px 0 2px}
+.chip{border:1px solid var(--rule);background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip small{font-weight:500;margin-left:4px;font-size:11px}
+.mrow{display:grid;grid-template-columns:64px 1fr 36px;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule)}
+.mrow .big{font-family:"Bodoni Moda",serif;font-weight:700;font-size:30px;line-height:1;color:var(--up);text-align:center}
+.mrow .big.nw{font-family:"Zen Kaku Gothic New",sans-serif;font-size:13px;font-weight:900;color:#fff;background:var(--wine);padding:5px 0;border-radius:3px;line-height:1.2}
+.mrow .unit{display:block;text-align:center;font-size:10px;color:var(--sub);margin-top:4px}
+.mrow a{min-width:0;display:block}
+.mrow .br{font-size:11.5px;font-weight:700;color:var(--ink);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrow .nm{font-size:13.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mrow .path{font-size:12px;color:var(--sub);margin-top:3px}
+.mrow .path b{color:var(--ink);font-weight:900}
+.streak{display:inline-block;font-size:10.5px;font-weight:700;color:var(--wine);border:1px solid var(--wine);border-radius:3px;padding:0 5px;margin-left:6px;vertical-align:1px;letter-spacing:0}
+
+/* brand momentum */
+.bchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.bstat{display:flex;align-items:baseline;gap:12px;margin:18px 0 4px}
+.bstat .num{font-size:48px;color:var(--ink)}
+.bstat .u{font-size:13px;color:var(--sub)}
+.bstat .mv{font-size:13px}
+.chart{position:relative;margin-top:6px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:12px;padding:5px 9px;border-radius:4px;white-space:nowrap;transform:translate(-50%,-120%);opacity:0;transition:opacity .12s}
+.chart .tip.on{opacity:1}
+.gain{margin-top:18px;border-top:1px solid var(--rule)}
+.gain h3{font-size:14px;font-weight:900;color:var(--ink);margin:14px 0 4px}
+.gr{display:grid;grid-template-columns:1fr auto;gap:12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:13.5px;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;color:var(--text)}
+.gr b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){ .chart .tip{transition:none} }
 footer{margin-top:44px;padding-top:14px;border-top:2px solid var(--ink);font-size:11.5px;color:var(--sub);line-height:1.8}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);background:var(--ink);color:#fff;font-size:13px;padding:9px 16px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -157,6 +188,13 @@ body:not(.locked) #gate{display:none}
   <div class="notes" id="notes"></div>
 
   <section>
+    <h2>今朝の動き</h2>
+    <p class="lead" id="riselead">前回の更新と比べて、順位を大きく上げた商品と、新しく上位100件に入った商品です。</p>
+    <div class="mvtabs" id="mvt"></div>
+    <div id="rise"></div>
+  </section>
+
+  <section>
     <h2>人気ランキング</h2>
     <p class="lead">BUYMA公式の人気アイテムランキングです。価格帯ごとにも見られます。数字はBUYMA全体での順位で、美容・コスメの商品を除いているため番号が飛ぶことがあります。</p>
     <div class="tabs" id="bf" role="tablist"></div>
@@ -167,12 +205,6 @@ body:not(.locked) #gate{display:none}
     <h2>気になるリスト<span id="wcount" class="lead" style="margin-left:8px"></span></h2>
     <p class="lead">ハートを押した商品の順位を、毎日ここで確認できます。</p>
     <div id="watch"></div>
-  </section>
-
-  <section>
-    <h2>急上昇</h2>
-    <p class="lead">前回の更新から大きく順位を上げた商品と、新しくランクインした商品です。</p>
-    <div id="rise"></div>
   </section>
 
   <section>
@@ -192,6 +224,14 @@ body:not(.locked) #gate{display:none}
     <h2>ジャンルの推移</h2>
     <p class="lead">上位100件に入った件数の、日ごとの変化です。</p>
     <div id="trend"></div>
+  </section>
+
+  <section>
+    <h2>ブランドの勢い</h2>
+    <p class="lead">人気アイテム上位100件に、そのブランドの商品が何件入っているかの毎日の推移です。</p>
+    <div class="bchips" id="bchips"></div>
+    <div id="bchart"></div>
+    <div class="gain" id="bgain"></div>
   </section>
 
   <section>
@@ -244,6 +284,13 @@ body:not(.locked) #gate{display:none}
     });
     var byId = {}; items.forEach(function(i){ byId[i.id] = i; });
     var prevRank = {}; if (prev) prev.items.forEach(function(a){ prevRank[String(a[1])] = a[0]; });
+    var md = function(d){ return (+d.slice(5, 7)) + "/" + (+d.slice(8)); };
+    var streak = {};
+    items.forEach(function(it){
+      var n = 0;
+      for (var k = hist.length - 1; k >= 0; k--) { if (hist[k].items.some(function(a){ return String(a[1]) === it.id; })) n++; else break; }
+      streak[it.id] = n;
+    });
     var fd = String(D.fetchedAt || "").split("-");
     $("upd").textContent = (fd.length === 3 ? (+fd[1]) + "月" + (+fd[2]) + "日の朝に更新" : "");
     $("bupd").textContent = "BUYMAの人気ブランドランキング(" + D.brandsUpdated + " 更新)。ブランド名を押すと、人気順の商品一覧が開きます。";
@@ -258,7 +305,7 @@ body:not(.locked) #gate{display:none}
       var on = !!watch[it.id];
       var sub = o.sub != null ? o.sub : mv(it);
       return '<div class="row' + (it.rank <= 3 ? ' top' : '') + '"><div class="rk"><div class="num">' + (o.rankText || it.rank) + '</div>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
-        '<a href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + '</div><div class="nm">' + esc(it.name) + '</div></a>' +
+        '<a href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + (o.noStreak || !(streak[it.id] >= 3) ? '' : '<span class="streak">' + streak[it.id] + '日連続</span>') + '</div><div class="nm">' + esc(it.name) + '</div></a>' +
         '<div class="pr">' + yen(it.price) + '</div>' +
         '<button class="heart' + (on ? ' on' : '') + '" type="button" data-id="' + esc(it.id) + '" aria-pressed="' + on + '" aria-label="気になるリストに入れる">' + HEART + '</button></div>';
     }
@@ -268,7 +315,7 @@ body:not(.locked) #gate{display:none}
           var id = b.dataset.id, it = byId[id];
           if (watch[id]) { delete watch[id]; toast("気になるリストから外しました"); }
           else {
-            if (!it) { var e = b.closest(".row"); it = {name:e.querySelector(".nm").textContent, brand:e.querySelector(".br").textContent, price:+e.querySelector(".pr").textContent.replace(/\D/g, ""), rank:null}; }
+            if (!it) { var e = b.closest(".row,.mrow"), pe = e.querySelector(".pr"); it = {name:e.querySelector(".nm").textContent, brand:e.querySelector(".br").textContent, price:pe ? +pe.textContent.replace(/\D/g, "") : 0, rank:null}; }
             watch[id] = {name:it.name, brand:it.brand, price:it.price, rank0:it.rank, date0:t0};
             toast("気になるリストに入れました");
           }
@@ -286,6 +333,24 @@ body:not(.locked) #gate{display:none}
     var bc = {}; items.slice(0, 50).forEach(function(it){ var b = it.brand.toUpperCase(); if (b) bc[b] = (bc[b] || 0) + 1; });
     var topB = Object.keys(bc).sort(function(a,b){ return bc[b] - bc[a]; }).slice(0, 3);
 
+    var riseList = [], newList = [], mvMode = 0;
+    if (prev) {
+      items.forEach(function(it){
+        var p = prevRank[it.id];
+        if (p === undefined) newList.push(it);
+        else if (p - it.rank >= 5) riseList.push({it:it, from:p, gain:p - it.rank});
+      });
+      riseList.sort(function(a,b){ return b.gain - a.gain || a.it.rank - b.it.rank; });
+      riseList = riseList.slice(0, 8);
+      $("riselead").textContent = md(prev.date) + "のランキングと比べて、順位を大きく上げた商品と、新しく上位100件に入った商品です。";
+      $("mvt").innerHTML = '<button class="chip on" type="button" data-m="0">急上昇<small>' + riseList.length + '</small></button><button class="chip" type="button" data-m="1">初登場<small>' + newList.length + '</small></button>';
+      $("mvt").addEventListener("click", function(e){
+        var b = e.target.closest(".chip"); if (!b) return;
+        mvMode = +b.dataset.m;
+        Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+        drawRise();
+      });
+    }
     // feature
     var f = items[0];
     $("feature").innerHTML = '<div class="num" aria-label="総合' + f.rank + '位">' + f.rank + '</div>' +
@@ -295,7 +360,9 @@ body:not(.locked) #gate{display:none}
     // notes
     var n1 = "人気アイテムの上位100件のうち、約" + share + "割が<strong>" + esc(gs[0]) + "</strong>です。" + (gs[0] === "アウター" ? "寒くなるこの時期は、ダウンやコートがよく動きます。" : "");
     var n2 = topB.length ? "上位50件で多く見かけるブランドは、<strong>" + topB.map(esc).join("、") + "</strong>。" : "";
-    $("notes").innerHTML = '<h2>今朝の売れ筋メモ</h2><p>' + n1 + '</p>' + (n2 ? '<p>' + n2 + '</p>' : '');
+    var n3 = "";
+    if (prev && riseList && riseList.length) { var r0 = riseList[0]; n3 = "一番の急上昇は、" + esc(r0.it.brand || "") + "の商品で<strong>" + r0.from + "位から" + r0.it.rank + "位</strong>へ。新しく上位100件に入った商品は<strong>" + newList.length + "件</strong>です。"; }
+    $("notes").innerHTML = '<h2>今朝の売れ筋メモ</h2><p>' + n1 + '</p>' + (n2 ? '<p>' + n2 + '</p>' : '') + (n3 ? '<p>' + n3 + '</p>' : '');
 
     // bands
     var BANDS = [["総合",0,1e12],["3万円未満",0,30000],["3〜10万円",30000,100000],["10万円以上",100000,1e12]];
@@ -336,14 +403,28 @@ body:not(.locked) #gate{display:none}
       wire($("watch"));
     }
 
+    function mrow(it, big, path){
+      var on = !!watch[it.id];
+      return '<div class="mrow">' + big +
+        '<a href="https://www.buyma.com/item/' + encodeURIComponent(it.id) + '/" target="_blank" rel="noopener"><div class="br">' + esc(it.brand) + '</div><div class="nm">' + esc(it.name) + '</div><div class="path">' + path + '</div></a>' +
+        '<button class="heart' + (on ? ' on' : '') + '" type="button" data-id="' + esc(it.id) + '" aria-pressed="' + on + '" aria-label="気になるリストに入れる">' + HEART + '</button></div>';
+    }
     function drawRise(){
       if (!prev) {
         $("rise").innerHTML = '<div class="empty"><b>明日の朝から表示されます</b>毎日のランキングを比べて、急に順位を上げた商品をここに出します。</div>';
         return;
       }
-      var r = items.map(function(it){ var p = prevRank[it.id]; return {it:it, gain:p === undefined ? 101 - it.rank : p - it.rank}; })
-        .filter(function(x){ return x.gain > 0; }).sort(function(a,b){ return b.gain - a.gain; }).slice(0, 5);
-      $("rise").innerHTML = r.map(function(x){ return row(x.it); }).join("") || '<div class="empty">今日は大きな動きはありませんでした。</div>';
+      var html;
+      if (mvMode === 0) {
+        html = riseList.map(function(x){
+          return mrow(x.it, '<div><div class="big">+' + x.gain + '</div><span class="unit">位アップ</span></div>', x.from + '位 → <b>' + x.it.rank + '位</b>　' + yen(x.it.price));
+        }).join("") || '<div class="empty">今日は大きく順位を上げた商品はありませんでした。</div>';
+      } else {
+        html = newList.slice(0, 10).map(function(it){
+          return mrow(it, '<div><div class="big nw">NEW</div><span class="unit">初登場</span></div>', '<b>' + it.rank + '位</b>で初登場　' + yen(it.price));
+        }).join("") || '<div class="empty">今日は新しく入った商品はありませんでした。</div>';
+      }
+      $("rise").innerHTML = html;
       wire($("rise"));
     }
 
@@ -395,6 +476,76 @@ body:not(.locked) #gate{display:none}
           '<div class="d"><span>' + (+H[0].date.slice(5, 7)) + '/' + (+H[0].date.slice(8)) + '</span><span>' + (+H[H.length - 1].date.slice(5, 7)) + '/' + (+H[H.length - 1].date.slice(8)) + '</span></div></div>';
       }).join("") + '</div>';
     }
+
+    // brand momentum
+    (function(){
+      var HB = hist.slice(-30), disp = {}, bs = {};
+      HB.forEach(function(h, di){
+        h.items.forEach(function(a){
+          if (isBeauty(a) || !a[2]) return;
+          var k = a[2].toUpperCase(); disp[k] = disp[k] || a[2];
+          bs[k] = bs[k] || HB.map(function(){ return 0; });
+          bs[k][di]++;
+        });
+      });
+      var L = HB.length - 1;
+      var keys = Object.keys(bs).sort(function(a,b){ return bs[b][L] - bs[a][L] || bs[b].reduce(function(x,y){return x+y;},0) - bs[a].reduce(function(x,y){return x+y;},0); });
+      var chips = keys.slice(0, 8);
+      if (!chips.length) { $("bchart").innerHTML = '<div class="empty">準備中です。</div>'; return; }
+      var sel = chips[0];
+      function drawChips(){
+        $("bchips").innerHTML = chips.concat(chips.indexOf(sel) < 0 ? [sel] : []).map(function(k){
+          return '<button class="chip' + (k === sel ? ' on' : '') + '" type="button" data-k="' + esc(k) + '" aria-pressed="' + (k === sel) + '">' + esc(disp[k]) + '</button>';
+        }).join("");
+      }
+      function drawChart(){
+        var v = bs[sel], n = v.length, last = v[n - 1], diff = n > 1 ? last - v[n - 2] : 0;
+        var W = 600, Hh = 220, pl = 28, pr = 16, pt = 18, pb = 28;
+        var ymax = Math.max(4, Math.max.apply(null, v)); ymax = Math.ceil(ymax / 2) * 2;
+        var x = function(i){ return n === 1 ? (pl + W - pr) / 2 : pl + i / (n - 1) * (W - pl - pr); };
+        var y = function(val){ return pt + (1 - val / ymax) * (Hh - pt - pb); };
+        var g = "";
+        [0, ymax / 2, ymax].forEach(function(t){
+          g += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y(t) + '" y2="' + y(t) + '" stroke="' + (t === 0 ? '#b9b2a8' : '#ebe7e1') + '"/>' +
+               '<text x="' + (pl - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end" font-size="11" fill="#7a746c">' + t + '</text>';
+        });
+        var step = Math.max(1, Math.ceil(n / 6));
+        HB.forEach(function(h, i){ if (i % step === 0 || i === n - 1) g += '<text x="' + x(i) + '" y="' + (Hh - 8) + '" text-anchor="middle" font-size="11" fill="#7a746c">' + md(h.date) + '</text>'; });
+        var pts = v.map(function(val, i){ return x(i).toFixed(1) + "," + y(val).toFixed(1); }).join(" ");
+        var area = '<polygon points="' + x(0).toFixed(1) + ',' + y(0) + ' ' + pts + ' ' + x(n - 1).toFixed(1) + ',' + y(0) + '" fill="#6b1e2a" opacity=".07"/>';
+        var line = '<polyline points="' + pts + '" fill="none" stroke="#6b1e2a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+        var dots = v.map(function(val, i){ return '<circle cx="' + x(i) + '" cy="' + y(val) + '" r="' + (i === n - 1 ? 5 : 4) + '" fill="#6b1e2a" stroke="#fff" stroke-width="2"/>'; }).join("");
+        var hits = v.map(function(val, i){ var w = n === 1 ? W : (W - pl - pr) / (n - 1); return '<rect data-i="' + i + '" x="' + (x(i) - w / 2) + '" y="0" width="' + w + '" height="' + Hh + '" fill="transparent"/>'; }).join("");
+        $("bchart").innerHTML = '<div class="bstat"><span class="num">' + last + '</span><span class="u">件が上位100件に入っています</span>' +
+          (n > 1 ? (diff ? '<span class="mv ' + (diff > 0 ? 'up' : 'down') + '">前回より' + (diff > 0 ? '+' : '') + diff + '件</span>' : '<span class="mv st">前回と同じ</span>') : '') + '</div>' +
+          '<div class="chart"><svg viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="' + esc(disp[sel]) + 'の上位100件内の件数の推移">' + g + area + line + dots + hits + '</svg><div class="tip" id="btip"></div></div>' +
+          (n < 7 ? '<p class="lead">まだ' + n + '日分のデータです。毎朝1日分ずつ増えて、最大30日分の流れが見られるようになります。</p>' : '');
+        var svg = $("bchart").querySelector("svg"), tip = $("btip");
+        function show(i){
+          var r = svg.getBoundingClientRect(), sc = r.width / W;
+          tip.innerHTML = md(HB[i].date) + '　<b>' + v[i] + '件</b>';
+          tip.style.left = (x(i) * sc) + "px"; tip.style.top = (y(v[i]) * sc) + "px"; tip.classList.add("on");
+        }
+        Array.prototype.forEach.call(svg.querySelectorAll("rect"), function(rc){
+          rc.addEventListener("mouseenter", function(){ show(+rc.dataset.i); });
+          rc.addEventListener("click", function(){ show(+rc.dataset.i); });
+        });
+        svg.addEventListener("mouseleave", function(){ tip.classList.remove("on"); });
+      }
+      function pick(k){ sel = k; drawChips(); drawChart(); }
+      $("bchips").addEventListener("click", function(e){ var b = e.target.closest(".chip"); if (b) pick(b.dataset.k); });
+      if (L > 0) {
+        var gains = keys.map(function(k){ return {k:k, d:bs[k][L] - bs[k][L - 1]}; }).filter(function(o){ return o.d > 0; })
+          .sort(function(a,b){ return b.d - a.d || bs[b.k][L] - bs[a.k][L]; }).slice(0, 5);
+        if (gains.length) {
+          $("bgain").innerHTML = '<h3>' + md(HB[L - 1].date) + 'から件数が増えたブランド</h3>' + gains.map(function(o){
+            return '<button class="gr" type="button" data-k="' + esc(o.k) + '"><span>' + esc(disp[o.k]) + '</span><b><span class="mv up">+' + o.d + '件</span>　' + bs[o.k][L] + '件</b></button>';
+          }).join("");
+          $("bgain").addEventListener("click", function(e){ var b = e.target.closest(".gr"); if (b) { pick(b.dataset.k); $("bchips").scrollIntoView({block:"nearest"}); } });
+        }
+      }
+      pick(sel);
+    })();
 
     $("brands").innerHTML = (D.brands || []).map(function(b, i){
       return '<a class="bd" href="https://www.buyma.com/r/' + encodeURIComponent(b[0]) + '/" target="_blank" rel="noopener"><span class="num">' + (i + 1) + '</span><span><div class="n">' + esc(b[0]) + '</div><div class="k">' + esc(b[1] || "") + '</div></span></a>';
